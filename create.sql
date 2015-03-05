@@ -10,7 +10,7 @@ CREATE TABLE person(
 );
 
 CREATE TABLE segler(
-  key INTEGER PRIMARY KEY REFERENCES person
+  key INTEGER PRIMARY KEY REFERENCES person ON UPDATE CASCADE ON DELETE CASCADE
 );
 
 CREATE TABLE trainer(
@@ -54,13 +54,13 @@ CREATE TABLE wettfahrt(
   datum   DATE,
   laenge  INTEGER,
   PRIMARY KEY (name, jahr, datum),
-  FOREIGN KEY (name) REFERENCES regatta (name),
-  FOREIGN KEY (jahr) REFERENCES regatta (jahr)
+  FOREIGN KEY (name,jahr) REFERENCES regatta (name,jahr)
 );
 
-/*
 CREATE TABLE bildet(
-  key   INTEGER PRIMARY KEY REFERENCES segler,
-  name  VARCHAR(50) PRIMARY KEY REFERENCES mannschaft
+  key   INTEGER,
+  name  VARCHAR(50),
+  PRIMARY KEY (key,name),
+  FOREIGN KEY (key) REFERENCES segler (key),
+  FOREIGN KEY (name) REFERENCES mannschaft (name)
 );
-*/
