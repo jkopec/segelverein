@@ -1,2 +1,11 @@
-DROP TABLE IF EXISTES
-person;
+DROP TABLE IF EXISTS
+person,
+segler,
+trainer,
+boot,
+tourenboot,
+sportboot,
+mannschaft,
+regatta,
+wettfahrt,
+bildet;

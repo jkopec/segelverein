@@ -4,38 +4,63 @@
 
 -- DROP TABLE IF EXISTS kategorie;
 CREATE TABLE person(
-      key           SERIAL,
-      name          varchar(50),
-      geburtsdatum  date,
-      PRIMARY KEY (key)
+  key           INTEGER PRIMARY KEY,
+  name          VARCHAR(50),
+  geburtsdatum  DATE
+);
+
+CREATE TABLE segler(
+  key INTEGER PRIMARY KEY REFERENCES person
+);
+
+CREATE TABLE trainer(
+  key INTEGER PRIMARY KEY REFERENCES person
+);
+
+CREATE TABLE boot(
+  id        INTEGER PRIMARY KEY,
+  name      VARCHAR(50),
+  person    INTEGER,
+  tiefgang  INTEGER
+);
+
+CREATE TABLE tourenboot(
+  id          INTEGER PRIMARY KEY,
+  bootsklasse VARCHAR(25)
+);
+
+CREATE TABLE sportboot(
+  id            INTEGER PRIMARY KEY,
+  segelflaeche  INTEGER
+);
+
+CREATE TABLE mannschaft(
+  name    VARCHAR(50) PRIMARY KEY,
+  aklasse VARCHAR(15),
+  key     INTEGER REFERENCES trainer
+);
+
+CREATE TABLE regatta(
+  name  VARCHAR(50),
+  jahr  SMALLINT,
+  land  VARCHAR(40),
+  PRIMARY KEY (name, jahr)
+--  CONSTRAINT helga UNIQUE (land)
+);
+
+CREATE TABLE wettfahrt(
+  name    VARCHAR(50),
+  jahr    SMALLINT,
+  datum   DATE,
+  laenge  INTEGER,
+  PRIMARY KEY (name, jahr, datum),
+  FOREIGN KEY (name) REFERENCES regatta (name),
+  FOREIGN KEY (jahr) REFERENCES regatta (jahr)
 );
 
 /*
-ALTER TABLE kategorie OWNER TO insy4;
-
---INSERTS
-INSERT INTO kategorie VALUES ('eBook', 10);
-INSERT INTO kategorie VALUES ('MP3', 20); -- Anführungszeichen!
-INSERT INTO kategorie VALUES ('Blu-ray', 20);
-INSERT INTO kategorie VALUES ('Elektronik', 20);
-
--- DROP TABLE IF EXISTS artikel;
-CREATE TABLE artikel (
-       aid   SERIAL,
-       kbez  VARCHAR(255) REFERENCES kategorie (kbez),
-       abez  VARCHAR(255),
-       preis DECIMAL(5,2),
-       PRIMARY KEY (aid)
+CREATE TABLE bildet(
+  key   INTEGER PRIMARY KEY REFERENCES segler,
+  name  VARCHAR(50) PRIMARY KEY REFERENCES mannschaft
 );
-ALTER TABLE artikel OWNER TO insy4;
-
---INSERTS
-INSERT INTO artikel (kbez, abez, preis) VALUES ('eBook', 'Der Anschlag', '0.00');
-INSERT INTO artikel (kbez, abez, preis) VALUES ('MP3', '21', '0.00');
-INSERT INTO artikel (kbez, abez, preis) VALUES ('Blu-ray', 'Pulp Fiction', '0.00');
-INSERT INTO artikel (kbez, abez, preis) VALUES ('Blu-ray', 'Hangover 2', '0.00');
-INSERT INTO artikel (kbez, abez, preis) VALUES ('Elektronik', 'Kindle WI-FI', '0.00');
-
--- reassign owned by postgres to insy4
-
 */

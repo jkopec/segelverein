@@ -1,5 +1,6 @@
-SOURCE C:\Users\Ernhofer\Documents\sharedFolder\segelverein\segelverein\drop.sql
+\i drop.sql
 
-SOURCE C:\Users\Ernhofer\Documents\sharedFolder\segelverein\segelverein\create.sql
+\i create.sql
 
--- SOURCE C:\Users\Ernhofer\Documents\sharedFolder\segelverein\segelverein\insert.sql
+\i insert.sql
+\q
