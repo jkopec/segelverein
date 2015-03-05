@@ -45,7 +45,6 @@ CREATE TABLE regatta(
   jahr  SMALLINT,
   land  VARCHAR(40),
   PRIMARY KEY (name, jahr)
---  CONSTRAINT helga UNIQUE (land)
 );
 
 CREATE TABLE wettfahrt(
@@ -63,4 +62,35 @@ CREATE TABLE bildet(
   PRIMARY KEY (key,name),
   FOREIGN KEY (key) REFERENCES segler (key),
   FOREIGN KEY (name) REFERENCES mannschaft (name)
+);
+
+CREATE TABLE zugewiesen(
+  id    INTEGER,
+  name  VARCHAR(50),
+  PRIMARY KEY (id,name),
+  FOREIGN KEY (id) REFERENCES boot (id),
+  FOREIGN KEY (name) REFERENCES mannschaft (name)
+);
+
+CREATE TABLE nimmt_teil(
+  mname     VARCHAR(50),
+  rname     VARCHAR(50),
+  rjahr     SMALLINT,
+  sportboot INTEGER,
+  startnr   SMALLINT,
+  PRIMARY KEY (mname,rname,rjahr,sportboot),
+  FOREIGN KEY (mname) REFERENCES mannschaft (name),
+  FOREIGN KEY (rname,rjahr) REFERENCES regatta (name,jahr),
+  FOREIGN KEY (sportboot) REFERENCES sportboot (id)
+);
+
+CREATE TABLE erzielt(
+  mname   VARCHAR(50),
+  wname   VARCHAR(50),
+  wjahr   SMALLINT,
+  wdatum  DATE,
+  punkte  INTEGER,
+  PRIMARY KEY(mname,wname,wjahr,wdatum),
+  FOREIGN KEY (mname) REFERENCES mannschaft (name),
+  FOREIGN KEY (wname,wjahr,wdatum) REFERENCES wettfahrt (name,jahr,datum)
 );

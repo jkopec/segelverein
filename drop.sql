@@ -8,4 +8,7 @@ sportboot,
 mannschaft,
 regatta,
 wettfahrt,
-bildet;
+bildet,
+zugewiesen,
+nimmt_teil,
+erzielt;
