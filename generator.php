@@ -3,7 +3,7 @@
   //$primaryPer = array();
   //array_push($primaryPer, 0);
 
-  $anzahl = 10;
+  $anzahl = 10000;
 
   //person
   $pname = array('Ernhofer','Adler','Karic','Kopec', 'Stedronsky', 'Kreutzer','Lehner','Zainzinger','Schwarz','Lupinek','Anil','Perny','Mustermann','Fischer','Meier','Svatunek','Haiderer','Pichler', 'Captain Hook', 'Captain Jack', 'Flotte Lotte');
@@ -27,10 +27,54 @@
   $rland = array('Belgien', 'Bulgarien', 'Deutschland', 'Estland', 'Finnland', 'Frankreich', 'Griechenland', 'Irland', 'Italien', 'Kroatien', 'Lettland', 'Litauen', 'Luxemburg', 'Malta', 'Niederlande', 'Polen', 'Portugal', 'Rumänien', 'Schweden', 'Slowakei', 'Slowenien', 'Spanien', 'Ungarn');
   $anzregatta = $anzahl/4;
 
+  $aufteilung = array();
+
   generate($pname,$rname,$rland);
 
   function datum($startdatum, $enddatum){
     return date("Y-m-d", mt_rand(strtotime($startdatum), strtotime($enddatum)));
+  }
+
+  function aufteilung(){
+    //Zuffalszahlen
+    do{
+    $z4;
+    $z3;
+    for($z4 = rand(9,50);$z4%10 != 0;){
+      $z4 = rand(9,50);
+    }
+    for($z3 = rand(9,90-$z4);$z3%10 != 0;){
+      $z3 = rand(9,90-$z4);
+    }
+    $z2 = 100 - ($z4 + $z3);
+
+    //Prozent
+    $z4 /= 100;
+    $z3 /= 100;
+    $z2 /= 100;
+
+    /*
+    $z4 = 0.4;
+    $z3 = 0.2;
+    $z2 = 0.4;
+    */
+
+    //echo ($z4." ".$z3." ".$z2);
+
+    $x = $GLOBALS['anzahl']/($z4*4+$z3*3+$z2*2+1);
+
+    echo($x."\n");
+
+  }while($x%1!=0);
+
+    $segler = $GLOBALS['anzahl']-$x;
+
+    $anzPersMit4er = $z4*4*$x;
+    $anzPersMit3er = $z3*3*$x;
+    $anzPersMit2er = $z2*2*$x;
+
+    $aufteilungtmp = array($x,$segler,$anzPersMit4er,$anzPersMit3er,$anzPersMit2er);
+    array_push($GLOBALS['aufteilung'],$aufteilungtmp);
   }
 
   function randomPerson($pname){
@@ -44,6 +88,10 @@
 
 			fwrite($GLOBALS['insertFile'], "INSERT INTO person (name, geburtsdatum) VALUES ('$pnametmp', '$gebdatumtmp');\n");
 		}
+  }
+
+  function randomTrainer(){
+
   }
 
   function randomRegatta($rname,$rland){
@@ -88,7 +136,9 @@
   }
 
   function generate($pname,$rname,$rland){
+    aufteilung();
     randomPerson($pname);
     randomRegatta($rname,$rland);
+    print_r($GLOBALS['aufteilung']);
   }
 ?>
