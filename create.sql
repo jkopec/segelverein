@@ -1,8 +1,3 @@
--- DROP DATABASE IF EXISTS segelverein;
--- CREATE DATABASE segelverein WITH OWNER = segel;
--- \c segelverein;
-
--- DROP TABLE IF EXISTS kategorie;
 CREATE TABLE person(
   key           SERIAL PRIMARY KEY,
   name          VARCHAR(50),
@@ -20,7 +15,7 @@ CREATE TABLE trainer(
 CREATE TABLE boot(
   id        SERIAL PRIMARY KEY,
   name      VARCHAR(50),
-  personen    INTEGER,
+  personen  INTEGER,
   tiefgang  INTEGER
 );
 
