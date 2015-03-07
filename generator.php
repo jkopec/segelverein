@@ -10,6 +10,10 @@
   $pname = array('Ernhofer','Adler','Karic','Kopec', 'Stedronsky', 'Kreutzer','Lehner','Zainzinger','Schwarz','Lupinek','Anil','Perny','Mustermann','Fischer','Meier','Svatunek','Haiderer','Pichler', 'Captain Hook', 'Captain Jack', 'Flotte Lotte');
   //geburtsdatum?
 
+  //Zählervariablen
+  $anztrainer = 0;
+  $anzsegler = 0 ;
+
   $bname = array('Abracadabra', 'Affähre', 'Ali Baba', 'Alligator', 'Anaconda', 'Anna Nass', 'AquaDuck', 'Aquaholic', 'Ausreißer', 'Airwave', 'Chili Lilly', 'Die faule Paula', 'Butterfly', 'Chouchou', 'Exotica');
   // personen zufallszahlen
   // tiefgang zufallszahlen
@@ -94,19 +98,43 @@
 		}
   }
 
-  function generateTrainer(){
+  function generateTrainerAlt(){
     //INSERT INTO trainer (key) VALUES (key);
-    fwrite($GLOBALS['insertFile'], "-- INSERTs for Trainer --\n");
+    fwrite($GLOBALS['insertFile'], "\n-- INSERTs for Trainer --\n");
     for($i=1;$i<=$GLOBALS['aufteilung'][0];$i++){
       fwrite($GLOBALS['insertFile'], "INSERT INTO trainer (key) VALUES ($i);\n");
     }
   }
 
-  function generateSegler(){
+  function generateTrainer(){
+    //INSERT INTO trainer (key) VALUES (key);
+    fwrite($GLOBALS['insertFile'], "\n-- INSERTs for Trainer --\n");
+    do{
+      $anztrainer  = $GLOBALS['anzahl']*rand(35, 45)/100;
+    }while(!is_int($anztrainer));
+    for($i=1;$i<=$anztrainer;$i++){
+      fwrite($GLOBALS['insertFile'], "INSERT INTO trainer (key) VALUES ($i);\n");
+      ++$GLOBALS['anztrainer'];
+    }
+  }
+
+  function generateSeglerAlt(){
     //INSERT INTO segler (key) VALUES (key);
-    fwrite($GLOBALS['insertFile'], "-- INSERTs for Segler --\n");
+    fwrite($GLOBALS['insertFile'], "\n-- INSERTs for Segler --\n");
     for($i=$GLOBALS['aufteilung'][0]+1;$i<=$GLOBALS['aufteilung'][1];$i++){
       fwrite($GLOBALS['insertFile'], "INSERT INTO segler (key) VALUES ($i);\n");
+    }
+  }
+
+  function generateSegler(){
+    //INSERT INTO segler (key) VALUES (key);
+    fwrite($GLOBALS['insertFile'], "\n-- INSERTs for Segler --\n");
+    do{
+      $anzsegler  = $GLOBALS['anzahl']*rand(70, 90)/100;
+    }while(!is_int($anzsegler));
+    for($i=$GLOBALS['anzahl'];$i>$GLOBALS['anzahl']-$anzsegler;$i--){
+      fwrite($GLOBALS['insertFile'], "INSERT INTO segler (key) VALUES ($i);\n");
+      ++$GLOBALS['anzsegler'];
     }
   }
 
@@ -129,7 +157,7 @@
     */
 
     //INSERT INTO regatta (name,jahr,land) VALUES (name,jahr,land);
-    fwrite($GLOBALS['insertFile'], "-- INSERTs for Regatta --\n");
+    fwrite($GLOBALS['insertFile'], "\n-- INSERTs for Regatta --\n");
     fwrite($GLOBALS['insertFile'], "INSERT INTO regatta (name,jahr,land) VALUES ('Bodenseeregatta',2014,'Oesterreich');\n");
     $usedrname = array('Bodenseeregatta');
     $usedrjahr = array(2014);
@@ -165,5 +193,6 @@
     generateTrainer();
     generateSegler();
     generateRegatta($rname,$rland);
+    echo("Trainer: ".$GLOBALS['anztrainer']."\nSegler:  ".$GLOBALS['anzsegler']);
   }
 ?>
