@@ -4,6 +4,11 @@
   //array_push($primaryPer, 0);
 
   $anzahl = 10000;
+  $trainerminmax = array(35,45);  //minimim muss sich überschneiden
+  $seglerminmax = array(70,90);   //minimum muss sich überschneiden
+  $bootminmax = array(25,40);
+  $sbootminmax = array(40,50);
+  $anzmannschaft = $anzahl/100;
   $anzregatta = $anzahl/100;
 
   //person
@@ -12,7 +17,9 @@
 
   //Zählervariablen
   $anztrainer = 0;
-  $anzsegler = 0 ;
+  $anzsegler = 0;
+  $anzboot = 0;
+  $anzsboot = 0;
 
   $bname = array('Abracadabra', 'Affähre', 'Ali Baba', 'Alligator', 'Anaconda', 'Anna Nass', 'AquaDuck', 'Aquaholic', 'Ausreißer', 'Airwave', 'Chili Lilly', 'Die faule Paula', 'Butterfly', 'Chouchou', 'Exotica');
   // personen zufallszahlen
@@ -33,7 +40,7 @@
 
   $aufteilung = array();
 
-  generate($pname,$rname,$rland);
+  generate($pname,$bname,$rname,$bklasse,$mname,$aklasse,$rland);
 
   function datum($startdatum, $enddatum){
     return date("Y-m-d", mt_rand(strtotime($startdatum), strtotime($enddatum)));
@@ -88,9 +95,7 @@
   function generatePerson($pname){
     //INSERT INTO person (name, geburtsdatum) VALUES (name, geburtsdatum);
     fwrite($GLOBALS['insertFile'], "-- INSERTs for Person --\n");
-    for($i=1;$i <= $GLOBALS['anzahl'];++$i)
-		{
-			//array_push($GLOBALS['primaryPer'], $i);
+    for($i=1;$i <= $GLOBALS['anzahl'];++$i){
       $pnametmp = $pname[rand(0, count($pname)-1)];
       $gebdatumtmp = datum("1960-01-01","2001-12-31");
 
@@ -110,7 +115,7 @@
     //INSERT INTO trainer (key) VALUES (key);
     fwrite($GLOBALS['insertFile'], "\n-- INSERTs for Trainer --\n");
     do{
-      $anztrainer  = $GLOBALS['anzahl']*rand(35, 45)/100;
+      $anztrainer  = $GLOBALS['anzahl']*rand($GLOBALS['trainerminmax'][0], $GLOBALS['trainerminmax'][1])/100;
     }while(!is_int($anztrainer));
     for($i=1;$i<=$anztrainer;$i++){
       fwrite($GLOBALS['insertFile'], "INSERT INTO trainer (key) VALUES ($i);\n");
@@ -130,7 +135,7 @@
     //INSERT INTO segler (key) VALUES (key);
     fwrite($GLOBALS['insertFile'], "\n-- INSERTs for Segler --\n");
     do{
-      $anzsegler  = $GLOBALS['anzahl']*rand(70, 90)/100;
+      $anzsegler  = $GLOBALS['anzahl']*rand($GLOBALS['seglerminmax'][0], $GLOBALS['seglerminmax'][1])/100;
     }while(!is_int($anzsegler));
     for($i=$GLOBALS['anzahl'];$i>$GLOBALS['anzahl']-$anzsegler;$i--){
       fwrite($GLOBALS['insertFile'], "INSERT INTO segler (key) VALUES ($i);\n");
@@ -138,14 +143,72 @@
     }
   }
 
-  function generateBoot(){
+  function generateBoot($bname){
     /*
     id        SERIAL PRIMARY KEY,
     name      VARCHAR(50),
     personen  INTEGER,
     tiefgang  INTEGER
     */
-    //INSTER INTO boot (name,personen,tiefgang) VALUES(bname,personen,tiefgang);
+    //INSERT INTO boot (name,personen,tiefgang) VALUES(bname,personen,tiefgang);
+    fwrite($GLOBALS['insertFile'], "\n-- INSERTs for Boot --\n");
+    do{
+      $anzboot  = $GLOBALS['anzahl']*rand($GLOBALS['bootminmax'][0], $GLOBALS['bootminmax'][1])/100;
+    }while(!is_int($anzboot));
+    for($i=1;$i <= $anzboot;++$i){
+      $bnametmp = $bname[rand(0, count($bname)-1)];
+      $personen = rand(4,10);
+      $tiefgang = rand(1,20);
+
+			fwrite($GLOBALS['insertFile'], "INSERT INTO boot (name,personen,tiefgang) VALUES('$bnametmp',$personen,$tiefgang);\n");
+      ++$GLOBALS['anzboot'];
+		}
+  }
+
+  function generateTourenboot($bklasse){
+    //INSERT INTO tourenboot (id,bootsklasse) VALUES (id, bklasse);
+    fwrite($GLOBALS['insertFile'], "\n-- INSERTs for Tourenboot --\n");
+    for($i=$GLOBALS['anzboot'];$i > $GLOBALS['anzsboot'];--$i){
+      $bklassetmp = $bklasse[rand(0, count($bklasse)-1)];
+
+      fwrite($GLOBALS['insertFile'], "INSERT INTO tourenboot (id,bootsklasse) VALUES ($i, '$bklassetmp');\n");
+    }
+  }
+
+  function generateSportboot(){
+    //INSERT INTO sportboot (id,segelflaeche) VALUES (id, segelflaeche);
+    fwrite($GLOBALS['insertFile'], "\n-- INSERTs for Sportboot --\n");
+    do{
+      $anzsboot  = $GLOBALS['anzboot']*rand($GLOBALS['sbootminmax'][0], $GLOBALS['sbootminmax'][1])/100;
+    }while(!is_int($anzsboot));
+    for($i=1;$i <= $anzsboot;++$i){
+      $segelflaechetmp= rand(5,25);
+
+      fwrite($GLOBALS['insertFile'], "INSERT INTO sportboot (id,segelflaeche) VALUES ($i, '$segelflaechetmp');\n");
+      ++$GLOBALS['anzsboot'];
+    }
+  }
+
+  function generateMannschaft($mname,$aklasse){
+    /*
+    name    VARCHAR(50) PRIMARY KEY,
+    aklasse VARCHAR(15),
+    key     INTEGER REFERENCES trainer
+    */
+    //INSERT INTO mannschaft (name, aklasse,key) VALUES (name,aklasse,key);
+
+    fwrite($GLOBALS['insertFile'], "\n-- INSERTs for Mannschaft --\n");
+    $zaehler=1;
+    for($i=1;$i<=$GLOBALS['anzmannschaft'];++$zaehler){
+      foreach($mname as $mnametmp){
+        $mnametmp = $mnametmp." ".$zaehler;
+        if($i<=$GLOBALS['anzmannschaft']){
+          $aklassetmp = rand(0,count($aklasse)-1);
+          fwrite($GLOBALS['insertFile'], "INSERT INTO mannschaft (name, aklasse,key) VALUES ('$mnametmp','$aklassetmp',$i);\n");
+          ++$i;
+        }
+      }
+    }
   }
 
   function generateRegatta($rname,$rland){
@@ -186,13 +249,16 @@
     }
   }
 
-  function generate($pname,$rname,$rland){
+
+  function generate($pname,$bname,$rname,$bklasse,$mname,$aklasse,$rland){
     aufteilung();
-    //print_r($GLOBALS['aufteilung']);
     generatePerson($pname);
     generateTrainer();
     generateSegler();
+    generateboot($bname);
+    generateSportboot();
+    generateTourenboot($bklasse);
+    generateMannschaft($mname,$aklasse);
     generateRegatta($rname,$rland);
-    echo("Trainer: ".$GLOBALS['anztrainer']."\nSegler:  ".$GLOBALS['anzsegler']);
   }
 ?>
