@@ -3,7 +3,7 @@
   //$primaryPer = array();
   //array_push($primaryPer, 0);
 
-  $anzahl = 10000;
+  $anzahl = 1000;
 
   //person
   $pname = array('Ernhofer','Adler','Karic','Kopec', 'Stedronsky', 'Kreutzer','Lehner','Zainzinger','Schwarz','Lupinek','Anil','Perny','Mustermann','Fischer','Meier','Svatunek','Haiderer','Pichler', 'Captain Hook', 'Captain Jack', 'Flotte Lotte');
@@ -22,10 +22,10 @@
   $aklasse = array('Junior 1', 'Junior 2', 'Junior 3', 'Profi 1', 'Profi 2', 'Ultimate', 'Rookie');
 
   //regatta
-  $rname = array('Ja', 'Nein', );
+  $rname = array('Bodenseeregatta', 'Nordseewoche', 'Kieler Woche', 'Bundesliga', 'Pantaenius Rund Skagen Race', 'Rund um den Bodensee', 'Rheinwoche', 'Swan Baltic Challenge', 'Berliner Yardstick CUP', '20 Stunden Wettfahrt', 'Ostsee Cup', 'Baltic Match Race', 'Rolex International Regatta', 'Rolex Swan American Regatta', 'Onion Patch', 'Antigua Sailing Week', '24 Uurs Zeilrace');
   //rjahr
   $rland = array('Belgien', 'Bulgarien', 'Deutschland', 'Estland', 'Finnland', 'Frankreich', 'Griechenland', 'Irland', 'Italien', 'Kroatien', 'Lettland', 'Litauen', 'Luxemburg', 'Malta', 'Niederlande', 'Polen', 'Portugal', 'Rumänien', 'Schweden', 'Slowakei', 'Slowenien', 'Spanien', 'Ungarn');
-  $anzregatta = $anzahl/4;
+  $anzregatta = $anzahl/100;
 
   $aufteilung = array();
 
@@ -53,17 +53,17 @@
     $z3 /= 100;
     $z2 /= 100;
 
-    /*
+    //------------Fixes setzen der Zuffalszahlen---------------
     $z4 = 0.4;
     $z3 = 0.2;
     $z2 = 0.4;
-    */
+
 
     //echo ($z4." ".$z3." ".$z2);
 
     $x = $GLOBALS['anzahl']/($z4*4+$z3*3+$z2*2+1);
 
-    echo($x."\n");
+    //echo($x."\n");
 
   }while($x%1!=0);
 
@@ -73,8 +73,12 @@
     $anzPersMit3er = $z3*3*$x;
     $anzPersMit2er = $z2*2*$x;
 
-    $aufteilungtmp = array($x,$segler,$anzPersMit4er,$anzPersMit3er,$anzPersMit2er);
-    array_push($GLOBALS['aufteilung'],$aufteilungtmp);
+    //$aufteilungtmp = array($x,$segler,$anzPersMit4er,$anzPersMit3er,$anzPersMit2er);
+    array_push($GLOBALS['aufteilung'],$x);
+    array_push($GLOBALS['aufteilung'],$segler);
+    array_push($GLOBALS['aufteilung'],$anzPersMit2er);
+    array_push($GLOBALS['aufteilung'],$anzPersMit3er);
+    array_push($GLOBALS['aufteilung'],$anzPersMit4er);
   }
 
   function randomPerson($pname){
@@ -91,7 +95,19 @@
   }
 
   function randomTrainer(){
+    //INSERT INTO trainer (key) VALUES (key);
+    fwrite($GLOBALS['insertFile'], "-- INSERTs for Trainer --\n");
+    for($i=1;$i<=$GLOBALS['aufteilung'][0];$i++){
+      fwrite($GLOBALS['insertFile'], "INSERT INTO trainer (key) VALUES ($i);\n");
+    }
+  }
 
+  function randomSegler(){
+    //INSERT INTO segler (key) VALUES (key);
+    fwrite($GLOBALS['insertFile'], "-- INSERTs for Segler --\n");
+    for($i=$GLOBALS['aufteilung'][0]+1;$i<=$GLOBALS['aufteilung'][1];$i++){
+      fwrite($GLOBALS['insertFile'], "INSERT INTO segler (key) VALUES ($i);\n");
+    }
   }
 
   function randomRegatta($rname,$rland){
@@ -104,29 +120,26 @@
 
     //INSERT INTO regatta (name,jahr,land) VALUES (name,jahr,land);
     fwrite($GLOBALS['insertFile'], "-- INSERTs for Regatta --\n");
+    fwrite($GLOBALS['insertFile'], "INSERT INTO regatta (name,jahr,land) VALUES ('Bodenseeregatta',2014,'Deutschland');\n");
+    $usedrname = array('Bodenseeregatta');
+    $usedrjahr = array(2014);
     for($i=1;$i <= $GLOBALS['anzregatta'];++$i){
       $rnametmp = $rname[rand(0, count($rname)-1)];
-      $rjahrtmp = mt_rand(1900,2014);
+      $rjahrtmp = mt_rand(1800,2014);
       $rlandtmp = $rland[rand(0, count($rland)-1)];
 
-      $usedrname = array();
-      $usedrjahr = array();
-
       $geht = true;
-      $first = true;
 
-    if(!$first){
-      for($i = 0; $i < count($usedrname);++$i){
-        if($usedrname[$i] == $rnametmp){
-          if($usedjahr[$i] == $rjahrtmp){
+      //Überprüfen, ob die Regatta nicht schon vorhanden ist.
+      for($j = 0; $j < count($usedrname);++$j){
+        if($usedrname[$j] == $rnametmp){
+          if($usedrjahr[$j] == $rjahrtmp){
             $geht = false;
-            $i = count($usedrname);
+            $j = count($usedrname);
           }
         }
       }
-    }
 
-      $first = false;
       if($geht){
         array_push($usedrname,$rnametmp);
         array_push($usedrjahr,$rjahrtmp);
@@ -137,8 +150,10 @@
 
   function generate($pname,$rname,$rland){
     aufteilung();
+    //print_r($GLOBALS['aufteilung']);
     randomPerson($pname);
     randomRegatta($rname,$rland);
-    print_r($GLOBALS['aufteilung']);
+    randomTrainer();
+    randomSegler();
   }
 ?>
