@@ -3,7 +3,8 @@
   //$primaryPer = array();
   //array_push($primaryPer, 0);
 
-  $anzahl = 1000;
+  $anzahl = 10000;
+  $anzregatta = $anzahl/100;
 
   //person
   $pname = array('Ernhofer','Adler','Karic','Kopec', 'Stedronsky', 'Kreutzer','Lehner','Zainzinger','Schwarz','Lupinek','Anil','Perny','Mustermann','Fischer','Meier','Svatunek','Haiderer','Pichler', 'Captain Hook', 'Captain Jack', 'Flotte Lotte');
@@ -19,13 +20,12 @@
 
   //Trouble mname is PK...
   $mname = array('Wilde Affen', 'Here for Beer', 'Die Hopfentropfen', 'Hello Titty', 'Die Durstigen', 'The Chicks', 'Die Gipfelstürmer', 'Die taffen Giraffen', 'Der Name zum Sieg', 'Namenlose Qualität');
-  $aklasse = array('Junior 1', 'Junior 2', 'Junior 3', 'Profi 1', 'Profi 2', 'Ultimate', 'Rookie');
+  $aklasse = array('Kinder', 'Junioren A', 'Junioren B', 'Senioren A', 'Senioren B', 'Masters');
 
   //regatta
   $rname = array('Bodenseeregatta', 'Nordseewoche', 'Kieler Woche', 'Bundesliga', 'Pantaenius Rund Skagen Race', 'Rund um den Bodensee', 'Rheinwoche', 'Swan Baltic Challenge', 'Berliner Yardstick CUP', '20 Stunden Wettfahrt', 'Ostsee Cup', 'Baltic Match Race', 'Rolex International Regatta', 'Rolex Swan American Regatta', 'Onion Patch', 'Antigua Sailing Week', '24 Uurs Zeilrace');
   //rjahr
   $rland = array('Belgien', 'Bulgarien', 'Deutschland', 'Estland', 'Finnland', 'Frankreich', 'Griechenland', 'Irland', 'Italien', 'Kroatien', 'Lettland', 'Litauen', 'Luxemburg', 'Malta', 'Niederlande', 'Polen', 'Portugal', 'Rumänien', 'Schweden', 'Slowakei', 'Slowenien', 'Spanien', 'Ungarn');
-  $anzregatta = $anzahl/100;
 
   $aufteilung = array();
 
@@ -81,7 +81,7 @@
     array_push($GLOBALS['aufteilung'],$anzPersMit4er);
   }
 
-  function randomPerson($pname){
+  function generatePerson($pname){
     //INSERT INTO person (name, geburtsdatum) VALUES (name, geburtsdatum);
     fwrite($GLOBALS['insertFile'], "-- INSERTs for Person --\n");
     for($i=1;$i <= $GLOBALS['anzahl'];++$i)
@@ -94,7 +94,7 @@
 		}
   }
 
-  function randomTrainer(){
+  function generateTrainer(){
     //INSERT INTO trainer (key) VALUES (key);
     fwrite($GLOBALS['insertFile'], "-- INSERTs for Trainer --\n");
     for($i=1;$i<=$GLOBALS['aufteilung'][0];$i++){
@@ -102,7 +102,7 @@
     }
   }
 
-  function randomSegler(){
+  function generateSegler(){
     //INSERT INTO segler (key) VALUES (key);
     fwrite($GLOBALS['insertFile'], "-- INSERTs for Segler --\n");
     for($i=$GLOBALS['aufteilung'][0]+1;$i<=$GLOBALS['aufteilung'][1];$i++){
@@ -110,7 +110,17 @@
     }
   }
 
-  function randomRegatta($rname,$rland){
+  function generateBoot(){
+    /*
+    id        SERIAL PRIMARY KEY,
+    name      VARCHAR(50),
+    personen  INTEGER,
+    tiefgang  INTEGER
+    */
+    //INSTER INTO boot (name,personen,tiefgang) VALUES(bname,personen,tiefgang);
+  }
+
+  function generateRegatta($rname,$rland){
     /*
     name  VARCHAR(50),
     jahr  SMALLINT,
@@ -120,7 +130,7 @@
 
     //INSERT INTO regatta (name,jahr,land) VALUES (name,jahr,land);
     fwrite($GLOBALS['insertFile'], "-- INSERTs for Regatta --\n");
-    fwrite($GLOBALS['insertFile'], "INSERT INTO regatta (name,jahr,land) VALUES ('Bodenseeregatta',2014,'Deutschland');\n");
+    fwrite($GLOBALS['insertFile'], "INSERT INTO regatta (name,jahr,land) VALUES ('Bodenseeregatta',2014,'Oesterreich');\n");
     $usedrname = array('Bodenseeregatta');
     $usedrjahr = array(2014);
     for($i=1;$i <= $GLOBALS['anzregatta'];++$i){
@@ -151,9 +161,9 @@
   function generate($pname,$rname,$rland){
     aufteilung();
     //print_r($GLOBALS['aufteilung']);
-    randomPerson($pname);
-    randomRegatta($rname,$rland);
-    randomTrainer();
-    randomSegler();
+    generatePerson($pname);
+    generateTrainer();
+    generateSegler();
+    generateRegatta($rname,$rland);
   }
 ?>
