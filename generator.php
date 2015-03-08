@@ -3,13 +3,14 @@
   //$primaryPer = array();
   //array_push($primaryPer, 0);
 
-  $anzahl = 10000;
+  $anzahl = 1000;
   $trainerminmax = array(35,45);  //minimim muss sich überschneiden
   $seglerminmax = array(70,90);   //minimum muss sich überschneiden
   $bootminmax = array(25,40);
   $sbootminmax = array(40,50);
-  $anzmannschaft = $anzahl/100;
+  $anzmannschaft = round($anzahl/50);
   $anzregatta = $anzahl/100;
+  $bildetminmax = array(70,90);
 
   //person
   $pname = array('Ernhofer','Adler','Karic','Kopec', 'Stedronsky', 'Kreutzer','Lehner','Zainzinger','Schwarz','Lupinek','Anil','Perny','Mustermann','Fischer','Meier','Svatunek','Haiderer','Pichler', 'Captain Hook', 'Captain Jack', 'Flotte Lotte');
@@ -33,10 +34,17 @@
   $mname = array('Wilde Affen', 'Here for Beer', 'Die Hopfentropfen', 'Hello Titty', 'Die Durstigen', 'The Chicks', 'Die Gipfelstürmer', 'Die taffen Giraffen', 'Der Name zum Sieg', 'Namenlose Qualität');
   $aklasse = array('Kinder', 'Junioren A', 'Junioren B', 'Senioren A', 'Senioren B', 'Masters');
 
+  $usedmname = array();
+  $usedmtrainer = array();
+
   //regatta
   $rname = array('Bodenseeregatta', 'Nordseewoche', 'Kieler Woche', 'Bundesliga', 'Pantaenius Rund Skagen Race', 'Rund um den Bodensee', 'Rheinwoche', 'Swan Baltic Challenge', 'Berliner Yardstick CUP', '20 Stunden Wettfahrt', 'Ostsee Cup', 'Baltic Match Race', 'Rolex International Regatta', 'Rolex Swan American Regatta', 'Onion Patch', 'Antigua Sailing Week', '24 Uurs Zeilrace');
   //rjahr
   $rland = array('Belgien', 'Bulgarien', 'Deutschland', 'Estland', 'Finnland', 'Frankreich', 'Griechenland', 'Irland', 'Italien', 'Kroatien', 'Lettland', 'Litauen', 'Luxemburg', 'Malta', 'Niederlande', 'Polen', 'Portugal', 'Rumänien', 'Schweden', 'Slowakei', 'Slowenien', 'Spanien', 'Ungarn');
+  $usedrname = array();
+  $usedrjahr = array();
+
+  $usedwdatum = array();
 
   $aufteilung = array();
 
@@ -203,11 +211,13 @@
       foreach($mname as $mnametmp){
         $mnametmp = $mnametmp." ".$zaehler;
         if($i<=$GLOBALS['anzmannschaft']){
-          $aklassetmp = rand(0,count($aklasse)-1);
+          $aklassetmp = $aklasse[rand(0,count($aklasse)-1)];
           fwrite($GLOBALS['insertFile'], "INSERT INTO mannschaft (name, aklasse,key) VALUES ('$mnametmp','$aklassetmp',$i);\n");
+          array_push($GLOBALS['usedmname'],$mnametmp);
           ++$i;
         }
       }
+      $GLOBALS['usedmtrainer']=$i-1;
     }
   }
 
@@ -222,8 +232,8 @@
     //INSERT INTO regatta (name,jahr,land) VALUES (name,jahr,land);
     fwrite($GLOBALS['insertFile'], "\n-- INSERTs for Regatta --\n");
     fwrite($GLOBALS['insertFile'], "INSERT INTO regatta (name,jahr,land) VALUES ('Bodenseeregatta',2014,'Oesterreich');\n");
-    $usedrname = array('Bodenseeregatta');
-    $usedrjahr = array(2014);
+    array_push($GLOBALS['usedrname'],'Bodenseeregatta');
+    array_push($GLOBALS['usedrjahr'],2014);
     for($i=1;$i <= $GLOBALS['anzregatta'];++$i){
       $rnametmp = $rname[rand(0, count($rname)-1)];
       $rjahrtmp = mt_rand(1800,2014);
@@ -232,23 +242,81 @@
       $geht = true;
 
       //Überprüfen, ob die Regatta nicht schon vorhanden ist.
-      for($j = 0; $j < count($usedrname);++$j){
-        if($usedrname[$j] == $rnametmp){
-          if($usedrjahr[$j] == $rjahrtmp){
+      for($j = 0; $j < count($GLOBALS['usedrname']);++$j){
+        if($GLOBALS['usedrname'][$j] == $rnametmp){
+          if($GLOBALS['usedrjahr'][$j] == $rjahrtmp){
             $geht = false;
-            $j = count($usedrname);
+            $j = count($GLOBALS['usedrname']);
           }
         }
       }
 
       if($geht){
-        array_push($usedrname,$rnametmp);
-        array_push($usedrjahr,$rjahrtmp);
+        array_push($GLOBALS['usedrname'],$rnametmp);
+        array_push($GLOBALS['usedrjahr'],$rjahrtmp);
         fwrite($GLOBALS['insertFile'], "INSERT INTO regatta (name,jahr,land) VALUES ('$rnametmp',$rjahrtmp,'$rlandtmp');\n");
       }
     }
   }
 
+  function generateWettfahrt(){
+    /*
+    name    VARCHAR(50),
+    jahr    SMALLINT,
+    datum   DATE,
+    laenge  INTEGER,
+    PRIMARY KEY (name, jahr, datum),
+    FOREIGN KEY (name,jahr) REFERENCES regatta
+    */
+    //INSERT INTO wettfahrt (name,jahr,datum,laenge) VALUES (wname,wjahr,wdatum,wlaenge);
+
+    fwrite($GLOBALS['insertFile'], "\n-- INSERTs for Wettfahrt --\n");
+
+    for($i=0;$i< count($GLOBALS['usedrname'])-1;$i++){
+      $wnametmp = $GLOBALS['usedrname'][$i];
+      $wjahrtmp = $GLOBALS['usedrjahr'][$i];
+      $wdatum = array();
+      for($j=1;$j<=rand(3,5);++$j){
+        do{
+          $neu = true;
+          $wdatumtmp = datum("$wjahrtmp-01-01","$wjahrtmp-12-31");  //speichern damits nicht doppelt kommt!!!
+          for($k=0;$k<count($wdatum)-1;++$k){
+            if($wdatumtmp==$wdatum[$k]){
+              $neu = false;
+              $k=count($wdatum);
+            }
+          }
+        }while(!$neu);
+        $wlaengetmp = rand(1000,10000);
+
+        fwrite($GLOBALS['insertFile'], "INSERT INTO wettfahrt (name,jahr,datum,laenge) VALUES ('$wnametmp',$wjahrtmp,'$wdatumtmp','$wlaengetmp');\n");
+        array_push($wdatum,$wdatumtmp);
+      }
+      array_push($GLOBALS['usedwdatum'],$wdatum);
+    }
+  }
+
+  function generateBildet(){
+    /*
+    key   INTEGER,     //$anzahl-$usedmtrainer
+    name  VARCHAR(50), //$usedmname
+    PRIMARY KEY (key,name),
+    FOREIGN KEY (key) REFERENCES segler (key) ON UPDATE CASCADE ON DELETE CASCADE,
+    FOREIGN KEY (name) REFERENCES mannschaft
+    */
+    //INSERT INTO bildet (key, name) VALUES (skey,mname);
+
+    fwrite($GLOBALS['insertFile'], "\n-- INSERTs for bildet --\n");
+    $anzbildet  = round(count($GLOBALS['usedmname'])*rand($GLOBALS['bildetminmax'][0], $GLOBALS['bildetminmax'][1])/100);
+    $zaehler = $GLOBALS['anzahl'];                                                     //muss anzahl werden
+    for($i=0;$i<$anzbildet;++$i){ //muss 0 bis anzbildet werden
+      $mnametmp = $GLOBALS['usedmname'][$i];
+      for($j=1;$j<=rand(2,4);++$j){
+        fwrite($GLOBALS['insertFile'], "INSERT INTO bildet (key, name) VALUES ($zaehler,'$mnametmp');\n");
+        --$zaehler;
+      }                                                               //zaehler muss erhöht werden
+    }
+  }
 
   function generate($pname,$bname,$rname,$bklasse,$mname,$aklasse,$rland){
     aufteilung();
@@ -260,5 +328,7 @@
     generateTourenboot($bklasse);
     generateMannschaft($mname,$aklasse);
     generateRegatta($rname,$rland);
+    generateWettfahrt();
+    generateBildet();
   }
 ?>
