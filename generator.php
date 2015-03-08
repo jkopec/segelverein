@@ -1,9 +1,7 @@
 <?php
   $insertFile = fopen("insert.sql", "w");
-  //$primaryPer = array();
-  //array_push($primaryPer, 0);
 
-  $anzahl = 1000;
+  $anzahl = 10000;
   $trainerminmax = array(35,45);  //minimim muss sich überschneiden
   $seglerminmax = array(70,90);   //minimum muss sich überschneiden
   $bootminmax = array(25,40);
@@ -12,7 +10,7 @@
   $anzregatta = round($anzahl/250);
   $bildetminmax = array(70,90);
   $zugewiesenminmax = array(70,90);
-  $anznimmtteil = round($anzmannschaft*$anzregatta*1.2);
+  $anznimmtteil = round($anzmannschaft*$anzregatta*1);
 
   //person
   $pname = array('Ernhofer','Adler','Karic','Kopec', 'Stedronsky', 'Kreutzer','Lehner','Zainzinger','Schwarz','Lupinek','Anil','Perny','Mustermann','Fischer','Meier','Svatunek','Haiderer','Pichler', 'Captain Hook', 'Captain Jack', 'Flotte Lotte');
@@ -47,6 +45,8 @@
   $usedrjahr = array();
 
   $usedwdatum = array();
+
+  $mnimmtteil = array();
 
   $aufteilung = array();
 
@@ -249,6 +249,7 @@
           if($GLOBALS['usedrjahr'][$j] == $rjahrtmp){
             $geht = false;
             $j = count($GLOBALS['usedrname']);
+            $i--;
           }
         }
       }
@@ -347,6 +348,7 @@
           if($usedid[$j] == $id){
             $geht = false;
             $j = count($usedmname);
+            --$i;
           }
         }
       }
@@ -406,7 +408,43 @@
         array_push($usedrname,$rnametmp);
         array_push($usedrjahr,$rjahrtmp);
         array_push($usedsboot,$sboottmp);
+        array_push($GLOBALS['mnimmtteil'],[$mnametmp,$x]);
         fwrite($GLOBALS['insertFile'], "INSERT INTO nimmt_teil (mname,rname,rjahr,sportboot,startnr) VALUES ('$mnametmp','$rnametmp',$rjahrtmp,$sboottmp,$startnrtmp);\n");
+      }
+    }
+  }
+
+  function generateErzielt(){
+    /*
+    mname   VARCHAR(50),
+    wname   VARCHAR(50),
+    wjahr   SMALLINT,
+    wdatum  DATE,
+    punkte  INTEGER,
+    */
+    //INSERT INTO erzielt (mname,wname,wjahr,wdatum,punkte) VALUES (wname,mname,wjahr,wdatum,punkte);
+
+    fwrite($GLOBALS['insertFile'], "\n-- INSERTs for erzielt --\n");
+    $used = array();
+    for($i=0;$i<count($GLOBALS['mnimmtteil']);++$i){
+      $neu = true;
+      for($k=0;$k<count($used);++$k){
+        if($GLOBALS['mnimmtteil'][$i][0]==$used[$k][0] && $GLOBALS['mnimmtteil'][$i][1]==$used[$k][1]){
+          $neu=false;
+        }
+      }
+      if($neu){
+        $mnametmp = $GLOBALS['mnimmtteil'][$i][0];
+        for($j=0;$j<count($GLOBALS['usedwdatum'][$GLOBALS['mnimmtteil'][$i][1]]);++$j){
+          $wnametmp = $GLOBALS['usedrname'][$GLOBALS['mnimmtteil'][$i][1]];
+          $wjahrtmp = $GLOBALS['usedrjahr'][$GLOBALS['mnimmtteil'][$i][1]];
+          $wdatumtmp= $GLOBALS['usedwdatum'][$GLOBALS['mnimmtteil'][$i][1]][$j];
+
+          $punktetmp = rand(0,100);
+
+          fwrite($GLOBALS['insertFile'], "INSERT INTO erzielt (mname,wname,wjahr,wdatum,punkte) VALUES ('$mnametmp','$wnametmp',$wjahrtmp,'$wdatumtmp',$punktetmp);\n");
+          array_push($used,$GLOBALS['mnimmtteil'][$i]);
+        }
       }
     }
   }
@@ -425,5 +463,8 @@
     generateBildet();
     generateZugewiesen();
     generateNimmtteil();
+    generateErzielt();
+    //print_r($GLOBALS['mnimmtteil']);
+    //print_r($GLOBALS['usedwdatum']);
   }
 ?>
