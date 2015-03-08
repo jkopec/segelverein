@@ -9,8 +9,10 @@
   $bootminmax = array(25,40);
   $sbootminmax = array(40,50);
   $anzmannschaft = round($anzahl/50);
-  $anzregatta = $anzahl/100;
+  $anzregatta = round($anzahl/250);
   $bildetminmax = array(70,90);
+  $zugewiesenminmax = array(70,90);
+  $anznimmtteil = round($anzmannschaft*$anzregatta*1.2);
 
   //person
   $pname = array('Ernhofer','Adler','Karic','Kopec', 'Stedronsky', 'Kreutzer','Lehner','Zainzinger','Schwarz','Lupinek','Anil','Perny','Mustermann','Fischer','Meier','Svatunek','Haiderer','Pichler', 'Captain Hook', 'Captain Jack', 'Flotte Lotte');
@@ -236,7 +238,7 @@
     array_push($GLOBALS['usedrjahr'],2014);
     for($i=1;$i <= $GLOBALS['anzregatta'];++$i){
       $rnametmp = $rname[rand(0, count($rname)-1)];
-      $rjahrtmp = mt_rand(1800,2014);
+      $rjahrtmp = mt_rand(1950,2014);
       $rlandtmp = $rland[rand(0, count($rland)-1)];
 
       $geht = true;
@@ -272,7 +274,7 @@
 
     fwrite($GLOBALS['insertFile'], "\n-- INSERTs for Wettfahrt --\n");
 
-    for($i=0;$i< count($GLOBALS['usedrname'])-1;$i++){
+    for($i=0;$i< count($GLOBALS['usedrname']);$i++){
       $wnametmp = $GLOBALS['usedrname'][$i];
       $wjahrtmp = $GLOBALS['usedrjahr'][$i];
       $wdatum = array();
@@ -318,8 +320,99 @@
     }
   }
 
+  function generateZugewiesen(){
+    /*
+    id    INTEGER,
+    name  VARCHAR(50),
+    FOREIGN KEY (id) REFERENCES boot
+    FOREIGN KEY (name) REFERENCES mannschaft
+    */
+    //INSERT INTO zugewiesen (id,name) VALUES (id,name);
+
+    fwrite($GLOBALS['insertFile'], "\n-- INSERTs for zugewiesen --\n");
+
+    $anzzugewiesen = round($GLOBALS['anzboot']*rand($GLOBALS['zugewiesenminmax'][0], $GLOBALS['zugewiesenminmax'][1])/100);
+
+    $usedmname = array();
+    $usedid = array();
+    for($i=1;$i <= $anzzugewiesen;++$i){
+      $mnametmp = $GLOBALS['usedmname'][rand(0,count($GLOBALS['usedmname'])-1)];
+      $id = rand(1,$GLOBALS['anzboot']);
+
+      $geht = true;
+
+      //Überprüfen, ob die Regatta nicht schon vorhanden ist.
+      for($j = 0; $j < count($usedmname);++$j){
+        if($usedmname[$j] == $mnametmp){
+          if($usedid[$j] == $id){
+            $geht = false;
+            $j = count($usedmname);
+          }
+        }
+      }
+
+      if($geht){
+        array_push($usedmname,$mnametmp);
+        array_push($usedid,$id);
+        fwrite($GLOBALS['insertFile'], "INSERT INTO zugewiesen (id,name) VALUES ($id,'$mnametmp');\n");
+      }
+    }
+  }
+
+  function generateNimmtteil(){
+    /*
+    mname     VARCHAR(50),
+    rname     VARCHAR(50),
+    rjahr     SMALLINT,
+    sportboot INTEGER,
+    startnr   SMALLINT,
+    */
+    //INSERT INTO nimmt_teil (mname,rname,rjahr,sportboot,startnr) VALUES (mname,rname,rjahr,sportboot,startnr);
+
+    fwrite($GLOBALS['insertFile'], "\n-- INSERTs for nimmt_teil --\n");
+
+    $usedmname = array();
+    $usedrname = array();
+    $usedrjahr = array();
+    $usedsboot = array();
+    for($i=1;$i<=$GLOBALS['anznimmtteil'];++$i){
+      $mnametmp = $GLOBALS['usedmname'][rand(0,count($GLOBALS['usedmname'])-1)];
+      $x=rand(0,count($GLOBALS['usedrname'])-1);
+      $rnametmp = $GLOBALS['usedrname'][$x];
+      $rjahrtmp = $GLOBALS['usedrjahr'][$x];
+      $sboottmp = rand(1,$GLOBALS['anzsboot']);
+      $startnrtmp = 1;
+
+      $geht = true;
+
+      //Überprüfen, ob die Regatta nicht schon vorhanden ist.
+      for($j = 0; $j < count($usedmname);++$j){
+        if($usedmname[$j] == $mnametmp){
+          if($usedrname[$j] == $rnametmp){
+            if($usedrjahr[$j] == $rjahrtmp){
+              ++$startnrtmp;
+              if($usedsboot[$j] == $sboottmp){
+                $geht = false;
+                $j = count($usedmname);
+                $i--;
+              }
+            }
+          }
+        }
+      }
+
+      if($geht){
+        array_push($usedmname,$mnametmp);
+        array_push($usedrname,$rnametmp);
+        array_push($usedrjahr,$rjahrtmp);
+        array_push($usedsboot,$sboottmp);
+        fwrite($GLOBALS['insertFile'], "INSERT INTO nimmt_teil (mname,rname,rjahr,sportboot,startnr) VALUES ('$mnametmp','$rnametmp',$rjahrtmp,$sboottmp,$startnrtmp);\n");
+      }
+    }
+  }
+
   function generate($pname,$bname,$rname,$bklasse,$mname,$aklasse,$rland){
-    aufteilung();
+    //aufteilung();
     generatePerson($pname);
     generateTrainer();
     generateSegler();
@@ -330,5 +423,7 @@
     generateRegatta($rname,$rland);
     generateWettfahrt();
     generateBildet();
+    generateZugewiesen();
+    generateNimmtteil();
   }
 ?>
