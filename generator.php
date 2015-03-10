@@ -283,7 +283,7 @@
         do{
           $neu = true;
           $wdatumtmp = datum("$wjahrtmp-01-01","$wjahrtmp-12-31");  //speichern damits nicht doppelt kommt!!!
-          for($k=0;$k<count($wdatum)-1;++$k){
+          for($k=0;$k<count($wdatum);++$k){
             if($wdatumtmp==$wdatum[$k]){
               $neu = false;
               $k=count($wdatum);
@@ -429,11 +429,14 @@
     for($i=0;$i<count($GLOBALS['mnimmtteil']);++$i){
       $neu = true;
       for($k=0;$k<count($used);++$k){
-        if($GLOBALS['mnimmtteil'][$i][0]==$used[$k][0]){
-          if($GLOBALS['mnimmtteil'][$i][1]==$used[$k][1]){
+        if($GLOBALS['mnimmtteil'][$i]==$used[$k]){
+        //if($GLOBALS['mnimmtteil'][$i][0]==$used[$k][0]){
+          //if($GLOBALS['mnimmtteil'][$i][1]==$used[$k][1]){
+          //echo($i." drin\n");
             $neu=false;
             $k=count($used);
-          }
+          //}
+        //}
         }
       }
 
@@ -451,8 +454,8 @@
         array_push($used,$GLOBALS['mnimmtteil'][$i]);
       }
     }
-    print_r($used);
-    echo(count($GLOBALS['mnimmtteil']));
+    //print_r($used);
+    //echo(count($GLOBALS['mnimmtteil']));
   }
 
   function generate($pname,$bname,$rname,$bklasse,$mname,$aklasse,$rland){
