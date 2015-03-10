@@ -6,11 +6,11 @@
   $seglerminmax = array(70,90);   //minimum muss sich überschneiden
   $bootminmax = array(25,40);
   $sbootminmax = array(40,50);
-  $anzmannschaft = round($anzahl/50);
-  $anzregatta = round($anzahl/250);
+  $anzmannschaft = round($anzahl/100);
+  $anzregatta = round($anzahl/300);
   $bildetminmax = array(70,90);
   $zugewiesenminmax = array(70,90);
-  $anznimmtteil = round($anzmannschaft*$anzregatta*1);
+  $anznimmtteil = round($anzmannschaft*$anzregatta);
 
   //person
   $pname = array('Ernhofer','Adler','Karic','Kopec', 'Stedronsky', 'Kreutzer','Lehner','Zainzinger','Schwarz','Lupinek','Anil','Perny','Mustermann','Fischer','Meier','Svatunek','Haiderer','Pichler', 'Captain Hook', 'Captain Jack', 'Flotte Lotte');
@@ -429,10 +429,14 @@
     for($i=0;$i<count($GLOBALS['mnimmtteil']);++$i){
       $neu = true;
       for($k=0;$k<count($used);++$k){
-        if($GLOBALS['mnimmtteil'][$i][0]==$used[$k][0] && $GLOBALS['mnimmtteil'][$i][1]==$used[$k][1]){
-          $neu=false;
+        if($GLOBALS['mnimmtteil'][$i][0]==$used[$k][0]){
+          if($GLOBALS['mnimmtteil'][$i][1]==$used[$k][1]){
+            $neu=false;
+            $k=count($used);
+          }
         }
       }
+
       if($neu){
         $mnametmp = $GLOBALS['mnimmtteil'][$i][0];
         for($j=0;$j<count($GLOBALS['usedwdatum'][$GLOBALS['mnimmtteil'][$i][1]]);++$j){
@@ -443,10 +447,12 @@
           $punktetmp = rand(0,100);
 
           fwrite($GLOBALS['insertFile'], "INSERT INTO erzielt (mname,wname,wjahr,wdatum,punkte) VALUES ('$mnametmp','$wnametmp',$wjahrtmp,'$wdatumtmp',$punktetmp);\n");
-          array_push($used,$GLOBALS['mnimmtteil'][$i]);
         }
+        array_push($used,$GLOBALS['mnimmtteil'][$i]);
       }
     }
+    print_r($used);
+    echo(count($GLOBALS['mnimmtteil']));
   }
 
   function generate($pname,$bname,$rname,$bklasse,$mname,$aklasse,$rland){

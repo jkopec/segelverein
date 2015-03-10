@@ -10,5 +10,6 @@ read ans
 
 if [ $ans = y -o $ans = Y -o $ans = yes -o $ans = Yes -o $ans = YES ]
 then
-PGPASSWORD=segel psql -U segel -h localhost segelverein
+./login.sh
 fi
+
