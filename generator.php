@@ -212,9 +212,10 @@
     for($i=1;$i<=$GLOBALS['anzmannschaft'];++$zaehler){
       foreach($mname as $mnametmp){
         $mnametmp = $mnametmp." ".$zaehler;
+        $trainertmp = rand(round($GLOBALS['anztrainer']*0.2),round($GLOBALS['anztrainer']*0.4));
         if($i<=$GLOBALS['anzmannschaft']){
           $aklassetmp = $aklasse[rand(0,count($aklasse)-1)];
-          fwrite($GLOBALS['insertFile'], "INSERT INTO mannschaft (name, aklasse,key) VALUES ('$mnametmp','$aklassetmp',$i);\n");
+          fwrite($GLOBALS['insertFile'], "INSERT INTO mannschaft (name, aklasse,key) VALUES ('$mnametmp','$aklassetmp',$trainertmp);\n");
           array_push($GLOBALS['usedmname'],$mnametmp);
           ++$i;
         }

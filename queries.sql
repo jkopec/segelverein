@@ -8,12 +8,13 @@ SELECT name,geburtsdatum FROM person ORDER BY geburtsdatum DESC LIMIT 25;
 SELECT name,key,geburtsdatum FROM person natural join trainer natural join segler WHERE key NOT IN (SELECT key FROM mannschaft) AND key NOT IN (SELECT key FROM bildet) ORDER BY geburtsdatum ASC;
 
 --4. Geben Sie alle Personen geordnet nach Geburtsdatum aus, die entweder Segler oder Trainer sind, jedoch nicht beides und vermerken Sie in einer Spalte, ob es sich um einen Trainer oder einen Segler handelt.
+SELECT *,'segler' AS funktion FROM person NATURAL JOIN segler WHERE key NOT IN (SELECT key FROM trainer) UNION SELECT *,'trainer' AS funktion FROM person NATURAL JOIN trainer WHERE key NOT IN (SELECT key FROM segler) ORDER BY geburtsdatum ASC;
 
 --5. Geben Sie die Regatten (Name und Jahr) mit den wenigsten Wettfahrten an und geben Sie auch die Anzahl aus.
 SELECT name,jahr,COUNT(datum) AS anzahl FROM wettfahrt GROUP BY name,jahr;
 
 --6. Geben Sie die Namen jener Trainer aus, die zwei oder mehr Mannschaften betreuen.
-SELECT name,mannschaften FROM (SELECT name, (SELECT COUNT(name) FROM mannschaft WHERE key = person.key) AS mannschaften FROM person NATURAL JOIN trainer) AS trainer where mannschaften >2;
+SELECT name,mannschaften FROM (SELECT name, (SELECT COUNT(name) FROM mannschaft WHERE key = person.key) AS mannschaften FROM person NATURAL JOIN trainer) AS trainer where mannschaften>1;
 
 --7. Welche Altersklasse ist am aktivsten (hat an den meisten Wettfahrten Punkte erzielt)?
 SELECT altersklasse FROM (SELECT aklasse AS altersklasse,sum(punkte) AS punkte FROM erzielt LEFT JOIN mannschaft ON erzielt.mname=mannschaft.name GROUP BY aklasse ORDER BY punkte DESC) AS altersklassen LIMIT 1;
@@ -30,6 +31,5 @@ SELECT mname AS mannschaft,COUNT(mname) AS anzahl, sum(punkte) AS punkte FROM (S
 
 --12. Geben Sie für JEDE Mannschaft aus, wieviele Punkte Sie bei der 'Bodenseeregatta' in 'Oesterreich' erzielt haben.
 
---13. Geben Sie die ID und den Namen jener Sportboote aus, die mindestens an zwei Regatten Teil genommen haben, aber keiner Mannschaft zugewiesen sind.
-
---14. Geben Sie die Regatten (Name, Jahr und Land) aus, die über die kürzeste Distanz gehen. 
+--14. Geben Sie die Regatten (Name, Jahr und Land) aus, die über die kürzeste Distanz gehen.
+SELECT name,jahr,land,sum(laenge) AS laenge FROM wettfahrt NATURAL JOIN regatta GROUP BY name,jahr,land ORDER BY laenge ASC LIMIT 35;
