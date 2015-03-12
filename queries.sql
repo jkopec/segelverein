@@ -28,8 +28,20 @@ SELECT mname AS mannschaft,COUNT(mname) AS anzahl, sum(punkte) AS punkte FROM (S
 --10. Welches Land bietet die längste Wettfahrtsstrecke und hat zusätzlich nicht die kürzeste?
 
 --11. Wie heißt der Trainer, der die Manschaft mit den meisten Punkten trainiert hat?
+SELECT name FROM person NATURAL JOIN (SELECT key,SUM(punkte) AS punkte FROM erzielt LEFT JOIN mannschaft ON mannschaft.name=erzielt.mname GROUP BY key ORDER BY punkte DESC) AS top_trainer LIMIT 1;
 
 --12. Geben Sie für JEDE Mannschaft aus, wieviele Punkte Sie bei der 'Bodenseeregatta' in 'Oesterreich' erzielt haben.
+
+--Alle die teilnehmen
+SELECT mname as name,sum(punkte) AS punkte FROM erzielt LEFT JOIN regatta ON erzielt.wname=regatta.name
+  WHERE wname = 'Bodenseeregatta' AND land = 'Oesterreich' GROUP BY mname;
+
+--Alle
+SELECT mname as name,sum(punkte) AS punkte FROM erzielt LEFT JOIN regatta ON erzielt.wname=regatta.name
+  WHERE wname = 'Bodenseeregatta' AND land = 'Oesterreich' GROUP BY mname
+UNION SELECT name,'0' AS punkte FROM mannschaft
+  WHERE name NOT in (SELECT mname AS punkte FROM erzielt LEFT JOIN regatta ON erzielt.wname=regatta.name
+  WHERE wname = 'Bodenseeregatta' AND land = 'Oesterreich' GROUP BY mname) GROUP BY name;
 
 --14. Geben Sie die Regatten (Name, Jahr und Land) aus, die über die kürzeste Distanz gehen.
 SELECT name,jahr,land,sum(laenge) AS laenge FROM wettfahrt NATURAL JOIN regatta GROUP BY name,jahr,land ORDER BY laenge ASC LIMIT 35;

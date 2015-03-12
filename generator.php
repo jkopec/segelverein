@@ -390,10 +390,10 @@
 
       //Überprüfen, ob die Regatta nicht schon vorhanden ist.
       for($j = 0; $j < count($usedmname);++$j){
-        if($usedmname[$j] == $mnametmp){
-          if($usedrname[$j] == $rnametmp){
-            if($usedrjahr[$j] == $rjahrtmp){
-              ++$startnrtmp;
+        if($usedrname[$j] == $rnametmp){
+          if($usedrjahr[$j] == $rjahrtmp){
+            ++$startnrtmp;
+            if($usedmname[$j] == $mnametmp){
               if($usedsboot[$j] == $sboottmp){
                 $geht = false;
                 $j = count($usedmname);
@@ -437,7 +437,7 @@
             $neu=false;
             $k=count($used);
           //}
-        //}
+      //}
         }
       }
 
