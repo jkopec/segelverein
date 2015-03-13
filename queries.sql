@@ -26,6 +26,8 @@ SELECT AVG(tiefgang)-(SELECT AVG(tiefgang) FROM sportboot NATURAL JOIN boot) as 
 SELECT mname AS mannschaft,COUNT(mname) AS anzahl, sum(punkte) AS punkte FROM (SELECT mname,wname,sum(punkte) as punkte FROM erzielt GROUP BY mname,wname) AS teilnehmen GROUP BY mname;
 
 --10. Welches Land bietet die längste Wettfahrtsstrecke und hat zusätzlich nicht die kürzeste?
+SELECT land FROM (SELECT land,MAX(laenge) FROM regatta NATURAL JOIN wettfahrt GROUP BY land ORDER BY max DESC) AS laengen WHERE land NOT IN (SELECT land FROM regatta NATURAL JOIN wettfahrt GROUP BY land ORDER BY MIN(laenge) ASC LIMIT 1) LIMIT 1;
+
 
 --11. Wie heißt der Trainer, der die Manschaft mit den meisten Punkten trainiert hat?
 SELECT name FROM person NATURAL JOIN (SELECT key,SUM(punkte) AS punkte FROM erzielt LEFT JOIN mannschaft ON mannschaft.name=erzielt.mname GROUP BY key ORDER BY punkte DESC) AS top_trainer LIMIT 1;
