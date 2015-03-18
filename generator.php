@@ -24,34 +24,34 @@
   $anzboot = 0;
   $anzsboot = 0;
 
+  //Namensliste fuer die Boote
   $bname = array('Abracadabra', 'Affähre', 'Ali Baba', 'Alligator', 'Anaconda', 'Anna Nass', 'AquaDuck', 'Aquaholic', 'Ausreißer', 'Airwave', 'Chili Lilly', 'Die faule Paula', 'Butterfly', 'Chouchou', 'Exotica');
-  // personen zufallszahlen
-  // tiefgang zufallszahlen
 
+  //Liste fuer die Bootsklassen
   $bklasse = array('Finn-Dinghy', 'Laser', 'Laser Radial', '49er', '49erFX', '470er', 'Nacra 17', 'RS:X', 'Sonar', ' SKUD18', '2.4mR');
 
-  //saegelflaeche
-
-  //Trouble mname is PK...
+  //Namensliste fuer die Mannschaften
   $mname = array('Wilde Affen', 'Here for Beer', 'Die Hopfentropfen', 'Hello Titty', 'Die Durstigen', 'The Chicks', 'Die Gipfelstürmer', 'Die taffen Giraffen', 'Der Name zum Sieg', 'Namenlose Qualität');
+
+  //Liste fuer die Altersklassen
   $aklasse = array('Kinder', 'Junioren A', 'Junioren B', 'Senioren A', 'Senioren B', 'Masters');
 
+  //Namesliste fuer die Regatten
+  $rname = array('Bodenseeregatta', 'Nordseewoche', 'Kieler Woche', 'Bundesliga', 'Pantaenius Rund Skagen Race', 'Rund um den Bodensee', 'Rheinwoche', 'Swan Baltic Challenge', 'Berliner Yardstick CUP', '20 Stunden Wettfahrt', 'Ostsee Cup', 'Baltic Match Race', 'Rolex International Regatta', 'Rolex Swan American Regatta', 'Onion Patch', 'Antigua Sailing Week', '24 Uurs Zeilrace');
+
+  //Liste der Laender fuer die Regatten
+  $rland = array('Belgien', 'Bulgarien', 'Deutschland', 'Estland', 'Finnland', 'Frankreich', 'Griechenland', 'Irland', 'Italien', 'Kroatien', 'Lettland', 'Litauen', 'Luxemburg', 'Malta', 'Niederlande', 'Polen', 'Portugal', 'Rumänien', 'Schweden', 'Slowakei', 'Slowenien', 'Spanien', 'Ungarn');
+
+  //Variablen fuer die verwendeten Werte
   $usedmname = array();
   $usedmtrainer = array();
-
-  //regatta
-  $rname = array('Bodenseeregatta', 'Nordseewoche', 'Kieler Woche', 'Bundesliga', 'Pantaenius Rund Skagen Race', 'Rund um den Bodensee', 'Rheinwoche', 'Swan Baltic Challenge', 'Berliner Yardstick CUP', '20 Stunden Wettfahrt', 'Ostsee Cup', 'Baltic Match Race', 'Rolex International Regatta', 'Rolex Swan American Regatta', 'Onion Patch', 'Antigua Sailing Week', '24 Uurs Zeilrace');
-  //rjahr
-  $rland = array('Belgien', 'Bulgarien', 'Deutschland', 'Estland', 'Finnland', 'Frankreich', 'Griechenland', 'Irland', 'Italien', 'Kroatien', 'Lettland', 'Litauen', 'Luxemburg', 'Malta', 'Niederlande', 'Polen', 'Portugal', 'Rumänien', 'Schweden', 'Slowakei', 'Slowenien', 'Spanien', 'Ungarn');
   $usedrname = array();
   $usedrjahr = array();
-
   $usedwdatum = array();
-
   $mnimmtteil = array();
-
   $aufteilung = array();
 
+  //Ausfuehren der "Hauptfunktion"
   generate($pname,$bname,$rname,$bklasse,$mname,$aklasse,$rland);
 
   //Eine Funktion die ein zufälliges Datum zwischen einem bestimmten Bereich zurückgibt
@@ -199,7 +199,7 @@
     for($i=1;$i <= $anzboot;++$i){
       $bnametmp = $bname[rand(0, count($bname)-1)]; //Wählt einen Namen aus der Liste
       $personen = rand(4,10);
-      $tiefgang = rand(1,20);
+      $tiefgang = rand(50,500);
 
       //Einfügen des SQL-Befehls in die Datei
 			fwrite($GLOBALS['insertFile'], "INSERT INTO boot (name,personen,tiefgang) VALUES('$bnametmp',$personen,$tiefgang);\n");
@@ -207,30 +207,45 @@
 		}
   }
 
+  //================================
+  //Generiert inserts für Tourenboot
+  //================================
   function generateTourenboot($bklasse){
     //INSERT INTO tourenboot (id,bootsklasse) VALUES (id, bklasse);
     fwrite($GLOBALS['insertFile'], "\n-- INSERTs for Tourenboot --\n");
     for($i=$GLOBALS['anzboot'];$i > $GLOBALS['anzsboot'];--$i){
-      $bklassetmp = $bklasse[rand(0, count($bklasse)-1)];
+      $bklassetmp = $bklasse[rand(0, count($bklasse)-1)]; //Wählen einer Bootklasse aus der Liste
 
+      //Einfügen des SQL-Befehls in die Datei
       fwrite($GLOBALS['insertFile'], "INSERT INTO tourenboot (id,bootsklasse) VALUES ($i, '$bklassetmp');\n");
     }
   }
 
+  //===============================
+  //Generiert inserts für Sportboot
+  //===============================
   function generateSportboot(){
     //INSERT INTO sportboot (id,segelflaeche) VALUES (id, segelflaeche);
     fwrite($GLOBALS['insertFile'], "\n-- INSERTs for Sportboot --\n");
+
+    //Berechnen der Anzahl der Sportboote
     do{
       $anzsboot  = $GLOBALS['anzboot']*rand($GLOBALS['sbootminmax'][0], $GLOBALS['sbootminmax'][1])/100;
-    }while(!is_int($anzsboot));
+    }while(!is_int($anzsboot));//Wenn es keine ganze zahl ist wird es erneut berechnet
+
     for($i=1;$i <= $anzsboot;++$i){
+      //Zufällige Größe für die Segelflaeche
       $segelflaechetmp= rand(5,25);
 
+      //Schreiben des SQL-Befehls in die Datei
       fwrite($GLOBALS['insertFile'], "INSERT INTO sportboot (id,segelflaeche) VALUES ($i, '$segelflaechetmp');\n");
       ++$GLOBALS['anzsboot'];
     }
   }
 
+  //================================
+  //Generiert inserts für Mannschaft
+  //================================
   function generateMannschaft($mname,$aklasse){
     /*
     name    VARCHAR(50) PRIMARY KEY,
@@ -244,18 +259,25 @@
     for($i=1;$i<=$GLOBALS['anzmannschaft'];++$zaehler){
       foreach($mname as $mnametmp){
         $mnametmp = $mnametmp." ".$zaehler;
+
+        //Wählen eines trainers
         $trainertmp = rand(round($GLOBALS['anztrainer']*0.2),round($GLOBALS['anztrainer']*0.4));
         if($i<=$GLOBALS['anzmannschaft']){
-          $aklassetmp = $aklasse[rand(0,count($aklasse)-1)];
+          $aklassetmp = $aklasse[rand(0,count($aklasse)-1)]; //Waehlen einer alltersklasse aus der Liste
+
+          //Schreiben des SQL-Befehls in die Datei
           fwrite($GLOBALS['insertFile'], "INSERT INTO mannschaft (name, aklasse,key) VALUES ('$mnametmp','$aklassetmp',$trainertmp);\n");
-          array_push($GLOBALS['usedmname'],$mnametmp);
+          array_push($GLOBALS['usedmname'],$mnametmp);//Speichern der Namen
           ++$i;
         }
       }
-      $GLOBALS['usedmtrainer']=$i-1;
+      $GLOBALS['usedmtrainer']=$i-1; //Speichern der verwendeten trainers
     }
   }
 
+  //=============================
+  //Generiert inserts für Regatta
+  //=============================
   function generateRegatta($rname,$rland){
     /*
     name  VARCHAR(50),
@@ -266,14 +288,14 @@
 
     //INSERT INTO regatta (name,jahr,land) VALUES (name,jahr,land);
     fwrite($GLOBALS['insertFile'], "\n-- INSERTs for Regatta --\n");
+    //Einfügen einer Regatta am Bodensee 2014
     fwrite($GLOBALS['insertFile'], "INSERT INTO regatta (name,jahr,land) VALUES ('Bodenseeregatta',2014,'Oesterreich');\n");
     array_push($GLOBALS['usedrname'],'Bodenseeregatta');
     array_push($GLOBALS['usedrjahr'],2014);
     for($i=1;$i <= $GLOBALS['anzregatta'];++$i){
-      $rnametmp = $rname[rand(0, count($rname)-1)];
-      $rjahrtmp = mt_rand(1950,2014);
-      $rlandtmp = $rland[rand(0, count($rland)-1)];
-
+      $rnametmp = $rname[rand(0, count($rname)-1)];//Waehlen eines namens aus der Liste
+      $rjahrtmp = mt_rand(1950,2014); //Zufaelliges Jahr
+      $rlandtmp = $rland[rand(0, count($rland)-1)];//Waehlen eines landes aus der Liste
       $geht = true;
 
       //Überprüfen, ob die Regatta nicht schon vorhanden ist.
@@ -288,13 +310,19 @@
       }
 
       if($geht){
+        //Speichern der verwnedenten Werte
         array_push($GLOBALS['usedrname'],$rnametmp);
         array_push($GLOBALS['usedrjahr'],$rjahrtmp);
+
+        //Schreiben des SQL-Befehls in die Datei
         fwrite($GLOBALS['insertFile'], "INSERT INTO regatta (name,jahr,land) VALUES ('$rnametmp',$rjahrtmp,'$rlandtmp');\n");
       }
     }
   }
 
+  //===============================
+  //Generiert inserts für Wettfahrt
+  //===============================
   function generateWettfahrt(){
     /*
     name    VARCHAR(50),
@@ -309,10 +337,15 @@
     fwrite($GLOBALS['insertFile'], "\n-- INSERTs for Wettfahrt --\n");
 
     for($i=0;$i< count($GLOBALS['usedrname']);$i++){
+
+      //Waehlen einer Regatta
       $wnametmp = $GLOBALS['usedrname'][$i];
       $wjahrtmp = $GLOBALS['usedrjahr'][$i];
+
       $wdatum = array();
       for($j=1;$j<=rand(3,5);++$j){
+
+        //Generieren von noch nicht verwendeten daten
         do{
           $neu = true;
           $wdatumtmp = datum("$wjahrtmp-01-01","$wjahrtmp-12-31");  //speichern damits nicht doppelt kommt!!!
@@ -323,15 +356,21 @@
             }
           }
         }while(!$neu);
+
+        //Zufaellige laenge
         $wlaengetmp = rand(1000,10000);
 
+        //Schreiben des SQL-Befehls in die Datei
         fwrite($GLOBALS['insertFile'], "INSERT INTO wettfahrt (name,jahr,datum,laenge) VALUES ('$wnametmp',$wjahrtmp,'$wdatumtmp','$wlaengetmp');\n");
-        array_push($wdatum,$wdatumtmp);
+        array_push($wdatum,$wdatumtmp); //Speichern des verwendeten Datums
       }
-      array_push($GLOBALS['usedwdatum'],$wdatum);
+      array_push($GLOBALS['usedwdatum'],$wdatum); //Speichern der verwendeten Daten
     }
   }
 
+  //============================
+  //Generiert inserts für bildet
+  //============================
   function generateBildet(){
     /*
     key   INTEGER,     //$anzahl-$usedmtrainer
@@ -343,17 +382,27 @@
     //INSERT INTO bildet (key, name) VALUES (skey,mname);
 
     fwrite($GLOBALS['insertFile'], "\n-- INSERTs for bildet --\n");
+
+    //Berechnen der anzahl für bildet
     $anzbildet  = round(count($GLOBALS['usedmname'])*rand($GLOBALS['bildetminmax'][0], $GLOBALS['bildetminmax'][1])/100);
-    $zaehler = $GLOBALS['anzahl'];                                                     //muss anzahl werden
-    for($i=0;$i<$anzbildet;++$i){ //muss 0 bis anzbildet werden
+
+    $zaehler = $GLOBALS['anzahl'];
+    for($i=0;$i<$anzbildet;++$i){
+
+      //Waehlen eines verwendeten Mannschaftsnamens
       $mnametmp = $GLOBALS['usedmname'][$i];
+
       for($j=1;$j<=rand(2,4);++$j){
+        //Speichern des SQL-Befehls in die Datei
         fwrite($GLOBALS['insertFile'], "INSERT INTO bildet (key, name) VALUES ($zaehler,'$mnametmp');\n");
         --$zaehler;
-      }                                                               //zaehler muss erhöht werden
+      }
     }
   }
 
+  //================================
+  //Generiert inserts für zugewiesen
+  //================================
   function generateZugewiesen(){
     /*
     id    INTEGER,
@@ -365,17 +414,20 @@
 
     fwrite($GLOBALS['insertFile'], "\n-- INSERTs for zugewiesen --\n");
 
+    //Berechnen der Anzahl für zugewiesen
     $anzzugewiesen = round($GLOBALS['anzboot']*rand($GLOBALS['zugewiesenminmax'][0], $GLOBALS['zugewiesenminmax'][1])/100);
 
+    //Variablen fuer die verwendeten Werte
     $usedmname = array();
     $usedid = array();
+
     for($i=1;$i <= $anzzugewiesen;++$i){
-      $mnametmp = $GLOBALS['usedmname'][rand(0,count($GLOBALS['usedmname'])-1)];
-      $id = rand(1,$GLOBALS['anzboot']);
+      $mnametmp = $GLOBALS['usedmname'][rand(0,count($GLOBALS['usedmname'])-1)]; //Waehlen eines verwendeten Mannschaftsnamen
+      $id = rand(1,$GLOBALS['anzboot']); //Waehlen einesBootes
 
       $geht = true;
 
-      //Überprüfen, ob die Regatta nicht schon vorhanden ist.
+      //Überprüfen, ob die Mannschaft diesem Boot nicht schon zugewiesen ist
       for($j = 0; $j < count($usedmname);++$j){
         if($usedmname[$j] == $mnametmp){
           if($usedid[$j] == $id){
@@ -387,13 +439,18 @@
       }
 
       if($geht){
+        //Speichern er verwendeten Werte
         array_push($usedmname,$mnametmp);
         array_push($usedid,$id);
+        //Schreiben des SQL-Befehls in die Datei
         fwrite($GLOBALS['insertFile'], "INSERT INTO zugewiesen (id,name) VALUES ($id,'$mnametmp');\n");
       }
     }
   }
 
+  //================================
+  //Generiert inserts für nimmt_teil
+  //================================
   function generateNimmtteil(){
     /*
     rname     VARCHAR(50),
@@ -406,25 +463,34 @@
 
     fwrite($GLOBALS['insertFile'], "\n-- INSERTs for nimmt_teil --\n");
 
+    //Variablen fuer die verwendeten Werte
     $usedmname = array();
     $usedrname = array();
     $usedrjahr = array();
     $usedsboot = array();
+
     for($i=1;$i<=$GLOBALS['anznimmtteil'];++$i){
+      //Waehlen eines verwendeten Mannschaftsnamen
       $mnametmp = $GLOBALS['usedmname'][rand(0,count($GLOBALS['usedmname'])-1)];
+
+      //Waehlen eine Regatta
       $x=rand(0,count($GLOBALS['usedrname'])-1);
       $rnametmp = $GLOBALS['usedrname'][$x];
       $rjahrtmp = $GLOBALS['usedrjahr'][$x];
+
+      //Waehlen eines Bootes
       $sboottmp = rand(1,$GLOBALS['anzsboot']);
+
       $startnrtmp = 1;
 
       $geht = true;
 
-      //Überprüfen, ob die Regatta nicht schon vorhanden ist.
+      //Überprüfen, ob Kombination von Mannschaft, Regatta und Boot nicht schon vorhanden ist
+      //und erhoehen der Startnummer, wenn schon boote bei dieser Regatta teilnehmen.
       for($j = 0; $j < count($usedmname);++$j){
         if($usedrname[$j] == $rnametmp){
           if($usedrjahr[$j] == $rjahrtmp){
-            ++$startnrtmp;
+            ++$startnrtmp; //Erhöhen der Startnummer
             if($usedmname[$j] == $mnametmp){
               if($usedsboot[$j] == $sboottmp){
                 $geht = false;
@@ -437,16 +503,21 @@
       }
 
       if($geht){
+        //Speichern der verwendeten Werte
         array_push($usedmname,$mnametmp);
         array_push($usedrname,$rnametmp);
         array_push($usedrjahr,$rjahrtmp);
         array_push($usedsboot,$sboottmp);
         array_push($GLOBALS['mnimmtteil'],[$mnametmp,$x]);
+        //Schreiben des SQL-Befehls in die Datei
         fwrite($GLOBALS['insertFile'], "INSERT INTO nimmt_teil (mname,rname,rjahr,sportboot,startnr) VALUES ('$mnametmp','$rnametmp',$rjahrtmp,$sboottmp,$startnrtmp);\n");
       }
     }
   }
 
+  //=============================
+  //Generiert inserts für erzielt
+  //=============================
   function generateErzielt(){
     /*
     mname   VARCHAR(50),
@@ -458,39 +529,39 @@
     //INSERT INTO erzielt (mname,wname,wjahr,wdatum,punkte) VALUES (wname,mname,wjahr,wdatum,punkte);
 
     fwrite($GLOBALS['insertFile'], "\n-- INSERTs for erzielt --\n");
-    $used = array();
+    $used = array(); //Variable fuer die verwendeten Mannschaftsnamen
     for($i=0;$i<count($GLOBALS['mnimmtteil']);++$i){
+
+      //Ueberpruefen ob die Mannschaft nicht schon bewertet wurde
       $neu = true;
       for($k=0;$k<count($used);++$k){
         if($GLOBALS['mnimmtteil'][$i]==$used[$k]){
-        //if($GLOBALS['mnimmtteil'][$i][0]==$used[$k][0]){
-          //if($GLOBALS['mnimmtteil'][$i][1]==$used[$k][1]){
-          //echo($i." drin\n");
-            $neu=false;
-            $k=count($used);
-          //}
-      //}
+          $neu=false;
+          $k=count($used);
         }
       }
 
       if($neu){
-        $mnametmp = $GLOBALS['mnimmtteil'][$i][0];
+        $mnametmp = $GLOBALS['mnimmtteil'][$i][0]; //Waehlen des Mannschaftnamens
         for($j=0;$j<count($GLOBALS['usedwdatum'][$GLOBALS['mnimmtteil'][$i][1]]);++$j){
+          //Waehlen der Wettfahrt
           $wnametmp = $GLOBALS['usedrname'][$GLOBALS['mnimmtteil'][$i][1]];
           $wjahrtmp = $GLOBALS['usedrjahr'][$GLOBALS['mnimmtteil'][$i][1]];
           $wdatumtmp= $GLOBALS['usedwdatum'][$GLOBALS['mnimmtteil'][$i][1]][$j];
 
+          //Zufahlspunkte
           $punktetmp = rand(0,100);
 
+          //Schreiben des SQL-Befehls in die Datei
           fwrite($GLOBALS['insertFile'], "INSERT INTO erzielt (mname,wname,wjahr,wdatum,punkte) VALUES ('$mnametmp','$wnametmp',$wjahrtmp,'$wdatumtmp',$punktetmp);\n");
         }
+        //Speicher der verwendteten Mannschaftsnamen
         array_push($used,$GLOBALS['mnimmtteil'][$i]);
       }
     }
-    //print_r($used);
-    //echo(count($GLOBALS['mnimmtteil']));
   }
 
+  //Führt alle generatortfunktionen aus und uebergibt die Namenslisten
   function generate($pname,$bname,$rname,$bklasse,$mname,$aklasse,$rland){
     //aufteilung();
     generatePerson($pname);
@@ -506,7 +577,5 @@
     generateZugewiesen();
     generateNimmtteil();
     generateErzielt();
-    //print_r($GLOBALS['mnimmtteil']);
-    //print_r($GLOBALS['usedwdatum']);
   }
 ?>
