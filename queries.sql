@@ -11,7 +11,7 @@ SELECT name,key,geburtsdatum FROM person natural join trainer natural join segle
 SELECT *,'segler' AS funktion FROM person NATURAL JOIN segler WHERE key NOT IN (SELECT key FROM trainer) UNION SELECT *,'trainer' AS funktion FROM person NATURAL JOIN trainer WHERE key NOT IN (SELECT key FROM segler) ORDER BY geburtsdatum ASC;
 
 --5. Geben Sie die Regatten (Name und Jahr) mit den wenigsten Wettfahrten an und geben Sie auch die Anzahl aus.
-SELECT name,jahr,COUNT(datum) AS anzahl FROM wettfahrt GROUP BY name,jahr;
+SELECT name,jahr,COUNT(datum) AS anzahl FROM wettfahrt GROUP BY name,jahr ORDER BY anzahl ASC LIMIT 25;
 
 --6. Geben Sie die Namen jener Trainer aus, die zwei oder mehr Mannschaften betreuen.
 SELECT name,mannschaften FROM (SELECT name, (SELECT COUNT(name) FROM mannschaft WHERE key = person.key) AS mannschaften FROM person NATURAL JOIN trainer) AS trainer where mannschaften>1;
@@ -28,7 +28,6 @@ SELECT mname AS mannschaft,COUNT(mname) AS anzahl, sum(punkte) AS punkte FROM (S
 --10. Welches Land bietet die längste Wettfahrtsstrecke und hat zusätzlich nicht die kürzeste?
 SELECT land FROM (SELECT land,MAX(laenge) FROM regatta NATURAL JOIN wettfahrt GROUP BY land ORDER BY max DESC) AS laengen WHERE land NOT IN (SELECT land FROM regatta NATURAL JOIN wettfahrt GROUP BY land ORDER BY MIN(laenge) ASC LIMIT 1) LIMIT 1;
 
-
 --11. Wie heißt der Trainer, der die Manschaft mit den meisten Punkten trainiert hat?
 SELECT name FROM person NATURAL JOIN (SELECT key,SUM(punkte) AS punkte FROM erzielt LEFT JOIN mannschaft ON mannschaft.name=erzielt.mname GROUP BY key ORDER BY punkte DESC) AS top_trainer LIMIT 1;
 
@@ -44,6 +43,9 @@ SELECT mname as name,sum(punkte) AS punkte FROM erzielt LEFT JOIN regatta ON erz
 UNION SELECT name,'0' AS punkte FROM mannschaft
   WHERE name NOT in (SELECT mname AS punkte FROM erzielt LEFT JOIN regatta ON erzielt.wname=regatta.name
   WHERE wname = 'Bodenseeregatta' AND land = 'Oesterreich' GROUP BY mname) GROUP BY name;
+
+--13. Geben Sie die ID und den Namen jender Sportboote aus, die mindestens an zwei Regatten teil enommen haben, aber keiner Mannschaft zugewiesen sind.
+SELECT id, name FROM (SELECT sportboot AS id, COUNT(sportboot) FROM nimmt_teil group by sportboot) AS teilnahmen NATURAL JOIN (SELECT id, name FROM (SELECT id, name FROM sportboot NATURAL JOIN boot WHERE id NOT IN (SELECT id FROM sportboot NATURAL JOIN zugewiesen)) AS boote) AS A;
 
 --14. Geben Sie die Regatten (Name, Jahr und Land) aus, die über die kürzeste Distanz gehen.
 SELECT name,jahr,land,sum(laenge) AS laenge FROM wettfahrt NATURAL JOIN regatta GROUP BY name,jahr,land ORDER BY laenge ASC LIMIT 35;
