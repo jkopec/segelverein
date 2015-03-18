@@ -5,8 +5,9 @@ import java.sql.*;
 import org.postgresql.ds.PGSimpleDataSource;
 
 /**
+ * Verbindet das Programm mit der Datenbank
  * @author Andi Ernhofer
- *
+ * @version 2015-03-18
  */
 public class Connector {
 
@@ -15,6 +16,13 @@ public class Connector {
 	private ResultSet rs;
 	private DatabaseMetaData dmd;
 
+	/**
+	 * Stellt eine verbindung mit der Datenbank her
+	 * @param servername Die Addresse des Servers
+	 * @param dbname Der Name der Datenbank
+	 * @param user Der Name des Benutzers
+	 * @param password Das Passwort des Benutzers
+	 */
 	public void connect(String servername, String dbname, String user, String password){
 		// Datenquelle erzeugen und konfigurieren
 		PGSimpleDataSource ds = new PGSimpleDataSource();
@@ -33,6 +41,11 @@ public class Connector {
 		}
 	}
 
+	/**
+	 * Fuehrt eine query in der Datenbank aus
+	 * @param query Die Query
+	 * @return //Gibt die Ausgabe der Datenank zurueck
+	 */
 	public ResultSet executeStatement(String query){
 		try {
 			this.st = this.con.createStatement();
@@ -45,10 +58,17 @@ public class Connector {
 		}
 	}
 	
+	/**
+	 * Gibt die Metadaten der Datenbank zurueck
+	 * @return Die Metadaten
+	 */
 	public DatabaseMetaData getDmd(){
 		return this.dmd;
 	}
 
+	/**
+	 * Schlieﬂt die verbindung
+	 */
 	public void close(){
 		try {
 			this.rs.close();

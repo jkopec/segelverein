@@ -7,14 +7,19 @@ import java.sql.*;
 import java.util.ArrayList;
 
 /**
+ * Klasse zur bereitstellug vpn Methoden
  * @author Andi Ernhofer
- *
+ * @version 2015-03-18
  */
 public class Model {
 
 	private Connector c;
 	private DatabaseMetaData dmd;
 
+	/**
+	 * Konstruktor
+	 * @param c Eine Datenbankverbindung 
+	 */
 	public Model(Connector c){
 		this.c = c;
 		this.dmd = c.getDmd();
@@ -40,7 +45,7 @@ public class Model {
 
 	/** 
 	 * Gibt die Namen aller Spalten einer Tabelle zurueck
-	 * @param table ein Tabellenname, aus dem die Spalten ausgelesen werden sollen
+	 * @param table der Tabellenname, aus dem die Spalten ausgelesen werden sollen
 	 * @return die Namen aller Spalten dieser Tabelle
 	 */
 	public String[] getAttributes(String table){
@@ -53,9 +58,15 @@ public class Model {
 			}
 		} catch (SQLException e){
 			System.out.println(e.getMessage()); 
-		} return columns.toArray(re);
+		}
+		return columns.toArray(re);
 	}
 
+	/**
+	 * Gibt alle Daten einer Tabelle zurueck
+	 * @param table der Tabellenname, von dem die Daten ausgelesen werden sollen
+	 * @return Alle Daten dieser Tabelle
+	 */
 	public String[][] getData(String table){
 		String[][] re = new String[1][1];
 		ArrayList<String> row = new ArrayList();
@@ -80,8 +91,6 @@ public class Model {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		// for rs.next mit den .getString(tablename);
-
 		return data.toArray(re);
 	}
 }

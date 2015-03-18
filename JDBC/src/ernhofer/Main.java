@@ -1,11 +1,9 @@
-/**
- * 
- */
 package ernhofer;
 
 /**
- * @author Andi
- *
+ * Fuehrt das Programm aus.
+ * @author Andi Ernhofer
+ * @version 2015-03-18
  */
 public class Main {
 	public static void main (String[] args){
