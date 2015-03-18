@@ -1,6 +1,9 @@
 <?php
+
+  //Die Datei, in die die SQL-Befehle geschrieben werden sollen
   $insertFile = fopen("insert.sql", "w");
 
+  //Variablen für die Anzahlen
   $anzahl = 10000;
   $trainerminmax = array(35,45);  //minimim muss sich überschneiden
   $seglerminmax = array(70,90);   //minimum muss sich überschneiden
@@ -12,11 +15,10 @@
   $zugewiesenminmax = array(70,90);
   $anznimmtteil = round($anzmannschaft*$anzregatta);
 
-  //person
+  //Array für die Namen von Personen
   $pname = array('Ernhofer','Adler','Karic','Kopec', 'Stedronsky', 'Kreutzer','Lehner','Zainzinger','Schwarz','Lupinek','Anil','Perny','Mustermann','Fischer','Meier','Svatunek','Haiderer','Pichler', 'Captain Hook', 'Captain Jack', 'Flotte Lotte');
-  //geburtsdatum?
 
-  //Zählervariablen
+  //Die Anzahl von Einträgen in den jeweiligen Tabellen
   $anztrainer = 0;
   $anzsegler = 0;
   $anzboot = 0;
@@ -52,10 +54,12 @@
 
   generate($pname,$bname,$rname,$bklasse,$mname,$aklasse,$rland);
 
+  //Eine Funktion die ein zufälliges Datum zwischen einem bestimmten Bereich zurückgibt
   function datum($startdatum, $enddatum){
     return date("Y-m-d", mt_rand(strtotime($startdatum), strtotime($enddatum)));
   }
 
+  //Alt
   function aufteilung(){
     //Zuffalszahlen
     do{
@@ -86,7 +90,7 @@
 
     //echo($x."\n");
 
-  }while($x%1!=0);
+    }while($x%1!=0);
 
     $segler = $GLOBALS['anzahl']-$x;
 
@@ -102,17 +106,22 @@
     array_push($GLOBALS['aufteilung'],$anzPersMit4er);
   }
 
+  //============================
+  //Generiert inserts für Person
+  //============================
   function generatePerson($pname){
     //INSERT INTO person (name, geburtsdatum) VALUES (name, geburtsdatum);
     fwrite($GLOBALS['insertFile'], "-- INSERTs for Person --\n");
     for($i=1;$i <= $GLOBALS['anzahl'];++$i){
-      $pnametmp = $pname[rand(0, count($pname)-1)];
-      $gebdatumtmp = datum("1960-01-01","2001-12-31");
+      $pnametmp = $pname[rand(0, count($pname)-1)]; //Wählt einen zufälligen Namen aus der Liste
+      $gebdatumtmp = datum("1960-01-01","2001-12-31"); //Berechnet ein zufälliges Datum
 
+      //Schreibt den SQL-Befehl in die Datei
 			fwrite($GLOBALS['insertFile'], "INSERT INTO person (name, geburtsdatum) VALUES ('$pnametmp', '$gebdatumtmp');\n");
 		}
   }
 
+  //Alt
   function generateTrainerAlt(){
     //INSERT INTO trainer (key) VALUES (key);
     fwrite($GLOBALS['insertFile'], "\n-- INSERTs for Trainer --\n");
@@ -121,18 +130,26 @@
     }
   }
 
+  //=============================
+  //Generiert inserts für Trainer
+  //=============================
   function generateTrainer(){
     //INSERT INTO trainer (key) VALUES (key);
     fwrite($GLOBALS['insertFile'], "\n-- INSERTs for Trainer --\n");
+
+    //Berechnen der Anzahl der Trainer
     do{
       $anztrainer  = $GLOBALS['anzahl']*rand($GLOBALS['trainerminmax'][0], $GLOBALS['trainerminmax'][1])/100;
-    }while(!is_int($anztrainer));
+    }while(!is_int($anztrainer)); //Wird erneut berechnet  wenn es keine ganze Zahl ist
+
+    //Schreiben der SQL-Befehle in die Datei
     for($i=1;$i<=$anztrainer;$i++){
       fwrite($GLOBALS['insertFile'], "INSERT INTO trainer (key) VALUES ($i);\n");
       ++$GLOBALS['anztrainer'];
     }
   }
 
+  //Alt
   function generateSeglerAlt(){
     //INSERT INTO segler (key) VALUES (key);
     fwrite($GLOBALS['insertFile'], "\n-- INSERTs for Segler --\n");
@@ -141,18 +158,28 @@
     }
   }
 
+  //============================
+  //Generiert inserts für Segler
+  //============================
   function generateSegler(){
     //INSERT INTO segler (key) VALUES (key);
     fwrite($GLOBALS['insertFile'], "\n-- INSERTs for Segler --\n");
+
+    //Berechnen der Anzahl der Segler
     do{
-      $anzsegler  = $GLOBALS['anzahl']*rand($GLOBALS['seglerminmax'][0], $GLOBALS['seglerminmax'][1])/100;
-    }while(!is_int($anzsegler));
+      $anzsegler  = $GLOBALS['anzahl']*rand($GLOBALS['seglerminmax'][0], $GLOBALS['seglerminmax'][1])/100; //Berechnen der Anzahl der Segler
+    }while(!is_int($anzsegler));//Erneut, wenn es keine ganze Zahl ist
+
+    //Schreiben der SQL-Befehle in die Datei
     for($i=$GLOBALS['anzahl'];$i>$GLOBALS['anzahl']-$anzsegler;$i--){
       fwrite($GLOBALS['insertFile'], "INSERT INTO segler (key) VALUES ($i);\n");
       ++$GLOBALS['anzsegler'];
     }
   }
 
+  //==========================
+  //Generiert inserts für Boot
+  //==========================
   function generateBoot($bname){
     /*
     id        SERIAL PRIMARY KEY,
@@ -162,14 +189,19 @@
     */
     //INSERT INTO boot (name,personen,tiefgang) VALUES(bname,personen,tiefgang);
     fwrite($GLOBALS['insertFile'], "\n-- INSERTs for Boot --\n");
+
+    //Berechnen der Anzahl der Boote
     do{
       $anzboot  = $GLOBALS['anzahl']*rand($GLOBALS['bootminmax'][0], $GLOBALS['bootminmax'][1])/100;
-    }while(!is_int($anzboot));
+    }while(!is_int($anzboot));//Wenn die Zahl nicht Ganzzahlig ist wird es erneut berechnet
+
+    //Erzeugen der Daten für den insert
     for($i=1;$i <= $anzboot;++$i){
-      $bnametmp = $bname[rand(0, count($bname)-1)];
+      $bnametmp = $bname[rand(0, count($bname)-1)]; //Wählt einen Namen aus der Liste
       $personen = rand(4,10);
       $tiefgang = rand(1,20);
 
+      //Einfügen des SQL-Befehls in die Datei
 			fwrite($GLOBALS['insertFile'], "INSERT INTO boot (name,personen,tiefgang) VALUES('$bnametmp',$personen,$tiefgang);\n");
       ++$GLOBALS['anzboot'];
 		}
@@ -364,8 +396,8 @@
 
   function generateNimmtteil(){
     /*
-    mname     VARCHAR(50),
     rname     VARCHAR(50),
+    mname     VARCHAR(50),
     rjahr     SMALLINT,
     sportboot INTEGER,
     startnr   SMALLINT,
