@@ -153,13 +153,16 @@ public class GUI extends JFrame{
 			menuepanel.add(tfield);
 			
 			felder.put(attribut[i], tfield);
-			System.out.println(attribut[i]);
 		}
 		
 		menuepanel.add(new JPanel());
 		menuepanel.add(buttons);
 
 		menuepanel.revalidate();
+	}
+	
+	public void SetMenuePanelAendern(){
+		
 	}
 	
 	public void useMenuePanelNeu(){
@@ -170,6 +173,10 @@ public class GUI extends JFrame{
 	public void useMenuepanelHaupt(){
 		setMenuePanelHaupt();
 		this.repaint();
+	}
+	
+	public void useMenuePanelAendern(){
+		
 	}
 	
 	public String getActiveTable(){

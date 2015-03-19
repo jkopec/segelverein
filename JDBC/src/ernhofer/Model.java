@@ -4,10 +4,9 @@
 package ernhofer;
 
 import java.sql.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.Set;
+import java.util.*;
+
+import javax.swing.JTextField;
 
 /**
  * Klasse zur bereitstellug vpn Methoden
@@ -102,9 +101,27 @@ public class Model {
 		
 		Iterator it = settmp.iterator();
 		
+		String insert = "INSERT INTO " + table + " (";
+		
 		while(it.hasNext()){
 			//Insert erzeugen mit zuerst key VALUES value holen mit key
+			insert += (it.next());
+			if(it.hasNext()){
+				insert += ",";
+			}
 		}
+		insert += ") VALUES (";
+		
+		it = settmp.iterator();
+		while(it.hasNext()){
+			JTextField tfield = (JTextField) map.get(it.next());
+			insert += tfield.getText();
+			if(it.hasNext()){
+				insert += ",";
+			}
+		}
+		insert += ");";
+		System.out.println(insert);
 	}
 	
 	public Connector getC(){
