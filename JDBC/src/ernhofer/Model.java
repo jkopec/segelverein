@@ -96,13 +96,18 @@ public class Model {
 		return data.toArray(re);
 	}
 	
+	/**
+	 * Erzeugt einen insert befehl und führt diesen aus
+	 * @param table der name der Tabelle
+	 * @param map Die daten die hineingespeichert werden sollen
+	 */
 	public void createInsert(String table, HashMap map){
 		Set settmp = map.keySet();
-		
 		Iterator it = settmp.iterator();
 		
 		String insert = "INSERT INTO " + table + " (";
 		
+		//Erzeugen der reihenfolge der Spaten in die eingefügt werden soll
 		while(it.hasNext()){
 			//Insert erzeugen mit zuerst key VALUES value holen mit key
 			insert += (it.next());
@@ -112,6 +117,7 @@ public class Model {
 		}
 		insert += ") VALUES (";
 		
+		//Schreiben der Inhalte die gespeichert weden sollen
 		it = settmp.iterator();
 		while(it.hasNext()){
 			JTextField tfield = (JTextField) map.get(it.next());
@@ -123,17 +129,25 @@ public class Model {
 		insert += ");";
 		//System.out.println(insert);
 		
+		//Ausführen des Befehls
 		c.execute("begin;");
 		c.execute(insert);
 		c.execute("commit;");
 	}
 	
+	/**
+	 * Erzeugt einen UPDATE Befehl und führt diesen aus
+	 * @param table Der Tabellenname
+	 * @param neu Die neuen Werte
+	 * @param old Die alten werte
+	 */
 	public void createUpdate(String table, HashMap neu, HashMap old){
 		Set settmp = old.keySet();
 		Iterator it = settmp.iterator();
 		
 		String update = "UPDATE " + table + " SET ";
 		
+		//Festlegen der zu ueberschreibenden werte
 		while(it.hasNext()){
 			String key = it.next().toString();
 			JTextField tfield = (JTextField) neu.get(key);
@@ -146,7 +160,7 @@ public class Model {
 		settmp = neu.keySet();
 		it = settmp.iterator();
 		
-		
+		//Angeben des zu überschreibenden Eintrages
 		while(it.hasNext()){
 			String key = it.next().toString();
 			update += key+"='"+old.get(key)+"'";
@@ -156,19 +170,25 @@ public class Model {
 		}
 		update +=";";
 		
+		//ausführen des Befehls
 		System.out.println(update);
 		c.execute("begin;");
 		c.execute(update);
 		c.execute("commit;");
 	}
 	
+	/**
+	 * Erzeugt einen delete befehl und führt diesen aus
+	 * @param table der Tabellename
+	 * @param map Die zu überschreibenden werte
+	 */
 	public void createDelete(String table, HashMap map){
 		Set settmp = map.keySet();
-		
 		Iterator it = settmp.iterator();
 		
 		String delete = "DELETE FROM " + table + " WHERE ";
 		
+		//Gibt die edingungen zur wahl des zu löschenden eintrages
 		while(it.hasNext()){
 			String key = (String) it.next();
 			delete += key +"='" + map.get(key)+ "'";
@@ -179,11 +199,16 @@ public class Model {
 		delete += ";";
 		System.out.println(delete);
 		
+		//Auaführen des Befehls
 		c.execute("begin;");
 		c.execute(delete);
 		c.execute("commit;");
 	}
 	
+	/**
+	 * Gibt den Connector zurück
+	 * @return der Connector
+	 */
 	public Connector getC(){
 		return this.c;
 	}

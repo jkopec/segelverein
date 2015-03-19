@@ -65,7 +65,7 @@ public class GUI extends JFrame{
 		
 		//erzeugt das Hauptmenue
 		setMenuePanelHaupt();
-		if(index >1 && index < jtp.getTabCount()){
+		if(index >-1 && index < jtp.getTabCount()){
 			jtp.setSelectedIndex(index);
 		}
 		
@@ -147,33 +147,37 @@ public class GUI extends JFrame{
 		menuepanel.revalidate();
 	}
 
+	/**
+	 * Befuellt das Panel zur Eingabe eines neuen Wertes
+	 * @param table Der Tabellenname in die Eingefuegt werden soll
+	 */
 	public void setMenuePanelNeu(String table){
 		menuepanel.removeAll();
 		menuepanel.setLayout(new GridLayout(16,1));
 		menuepanel.add(new JPanel());
 		menuepanel.add(menueueberschrift);
 		
+		//Einstellungen fuer die Buttons
 		menuebutton = new JButton[2];
-		
 		for(int i = 0; i < this.menuebutton.length;++i){
 			this.menuebutton[i] = new JButton();
 			this.menuebutton[i].addActionListener(al);
 		}
-		
 		this.menuebutton[0].setText("Speichern");
 		this.menuebutton[0].setActionCommand("speichern");
 		this.menuebutton[1].setText("Abbrechen");
 		this.menuebutton[1].setActionCommand("abbrechen");
 		
+		//Panel fuer die buttons
 		JPanel buttons = new JPanel();
 		buttons.setLayout(new GridLayout(1,2));
-		
 		buttons.add(menuebutton[0]);
 		buttons.add(menuebutton[1]);
 		
 		felder = new HashMap();
-		String attribut[] = m.getAttributes(table);
+		String attribut[] = m.getAttributes(table); //Spaltennamen
 		
+		//Ereugt die richtige Anzahl an Eingabefeldern
 		for(int i = 0; i < attribut.length; ++i){
 			JLabel label = new JLabel(attribut[i] + ": ");
 			
@@ -191,27 +195,30 @@ public class GUI extends JFrame{
 		menuepanel.revalidate();
 	}
 	
+	/**
+	 * Befuellt das Panel zur AEnderung eines Eintrages
+	 * @param table Der Tabellenname in dem etwas geaendert werden soll
+	 */
 	public void SetMenuePanelAendern(String table){
 		menuepanel.removeAll();
 		menuepanel.setLayout(new GridLayout(16,1));
 		menuepanel.add(new JPanel());
 		menuepanel.add(menueueberschrift);
 		
+		//Einstellungen fuer die Buttons
 		menuebutton = new JButton[2];
-		
 		for(int i = 0; i < this.menuebutton.length;++i){
 			this.menuebutton[i] = new JButton();
 			this.menuebutton[i].addActionListener(al);
 		}
-		
 		this.menuebutton[0].setText("Speichern");
 		this.menuebutton[0].setActionCommand("aendernspeichern");
 		this.menuebutton[1].setText("Abbrechen");
 		this.menuebutton[1].setActionCommand("abbrechen");
 		
+		//Panel fuer die Buttons
 		JPanel buttons = new JPanel();
 		buttons.setLayout(new GridLayout(1,2));
-		
 		buttons.add(menuebutton[0]);
 		buttons.add(menuebutton[1]);
 		
@@ -219,6 +226,7 @@ public class GUI extends JFrame{
 		old = new HashMap();
 		String attribut[] = m.getAttributes(table);
 		
+		//Erzeugt die richtige anzahl an Eingabefeldern und befüllt diese mit den aktuellen werten
 		for(int i = 0; i < attribut.length; ++i){
 			JLabel label = new JLabel(attribut[i] + ": ");
 			
@@ -241,37 +249,66 @@ public class GUI extends JFrame{
 		menuepanel.revalidate();
 	}
 	
+	/**
+	 * Gibt die Tabellen zurück
+	 * @return die Tabellen
+	 */
 	public JTable[] getTable() {
 		return table;
 	}
 
+	/**
+	 * Gibt die Tabs zurück
+	 * @return die Tabs
+	 */
 	public JTabbedPane getJtp() {
 		return jtp;
 	}
 
+	/**
+	 * Wählt das Eingabemenü aktuelle anzeige
+	 */
 	public void useMenuePanelNeu(){
 		setMenuePanelNeu(getActiveTable());
 		this.repaint();
 	}
 	
+	/**
+	 * Wählt das Hauptmenü als aktuelle anzeige
+	 */
 	public void useMenuepanelHaupt(){
 		setMenuePanelHaupt();
 		this.repaint();
 	}
 	
+	/**
+	 * Wählt das Panel zum Ändern als aktuelle anzeige
+	 */
 	public void useMenuePanelAendern(){
 		SetMenuePanelAendern(getActiveTable());
 		this.repaint();
 	}
 	
+	/**
+	 * Gib den Namen der aktuellen Tabelle zurück
+	 * @return der Name der aktuellen Tabelle
+	 */
 	public String getActiveTable(){
 		return jtp.getTitleAt(jtp.getSelectedIndex());
 	}
 	
+	/**
+	 * Gibt die Werte die neu gespeichertwerden zurück
+	 * @return die Werte die neu gespeichert werden müssen
+	 */
 	public HashMap getMap(){
 		return this.felder;
 	}
 	
+	/**
+	 * Gibt die alen Werte zurück
+	 * @return die alten Werte
+	 */
 	public HashMap getMapOld(){
 		return this.old;
 	}

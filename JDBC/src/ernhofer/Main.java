@@ -11,6 +11,6 @@ public class Main {
 		c.connect("school", "segelverein", "segel", "segel");
 		Model m = new Model(c);
 		GUI gui = new GUI(m);
-		gui.init(-1);
+		gui.init(-1); //-1 gibt keinen bestimmten Tab zur auswahl an
 	}
 }

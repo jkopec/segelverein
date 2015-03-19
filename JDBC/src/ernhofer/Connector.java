@@ -73,7 +73,8 @@ public class Connector {
 			this.st.execute(command);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			//e.printStackTrace();
+			System.out.println("Fehler beim ausführen des Befehls7");
 		}
 	}
 	
