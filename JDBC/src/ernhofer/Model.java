@@ -5,6 +5,9 @@ package ernhofer;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Set;
 
 /**
  * Klasse zur bereitstellug vpn Methoden
@@ -92,5 +95,19 @@ public class Model {
 			e.printStackTrace();
 		}
 		return data.toArray(re);
+	}
+	
+	public void createInsert(String table, HashMap map){
+		Set settmp = map.keySet();
+		
+		Iterator it = settmp.iterator();
+		
+		while(it.hasNext()){
+			//Insert erzeugen mit zuerst key VALUES value holen mit key
+		}
+	}
+	
+	public Connector getC(){
+		return this.c;
 	}
 }

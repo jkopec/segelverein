@@ -34,6 +34,10 @@ public class Connector {
 		//Verbindung herstellen
 		try {
 			this.con = ds.getConnection();
+			
+			//AUTOCOMMIT deaktivieren
+			this.con.setAutoCommit(false);
+			
 			this.dmd = con.getMetaData();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
