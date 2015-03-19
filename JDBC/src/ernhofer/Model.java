@@ -121,7 +121,7 @@ public class Model {
 			}
 		}
 		insert += ");";
-		System.out.println(insert);
+		//System.out.println(insert);
 		
 		c.execute("begin;");
 		c.execute(insert);
@@ -145,6 +145,10 @@ public class Model {
 		}
 		delete += ";";
 		System.out.println(delete);
+		
+		c.execute("begin;");
+		c.execute(delete);
+		c.execute("commit;");
 	}
 	
 	public Connector getC(){

@@ -11,7 +11,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 /**
- * @author Andi
+ * @author Andi Ernhofer
  *
  */
 public class AListener implements ActionListener {
@@ -48,6 +48,10 @@ public class AListener implements ActionListener {
 				map.put(tname, value);
 			}
 			m.createDelete(gui.getActiveTable(),map);
+			
+			gui.init();
+			gui.repaint();
+			gui.useMenuepanelHaupt();
 			break;
 		case("speichern"):
 			m.createInsert(gui.getActiveTable(), gui.getMap());

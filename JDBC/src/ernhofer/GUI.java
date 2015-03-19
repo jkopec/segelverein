@@ -44,7 +44,7 @@ public class GUI extends JFrame{
 		this.haupt = new JPanel();
 		
 		//Initialisieren der Schriftart für die 
-		this.menuefont = new Font("Calibri",Font.PLAIN,27);
+		this.menuefont = new Font("Calibri",Font.PLAIN,25);
 		
 		//Einstellungen für die Überschrift
 		this.menueueberschrift = new JLabel("Menü");
