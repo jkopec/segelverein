@@ -1,6 +1,3 @@
-/**
- * 
- */
 package ernhofer;
 
 import java.awt.event.ActionEvent;
@@ -34,9 +31,13 @@ public class AListener implements ActionListener {
 			gui.useMenuePanelNeu();
 			break;
 		case("aendern"):
+			/*
 			table = gui.getTable()[gui.getJtp().getSelectedIndex()];
-		//for(int i = 0; )
 			((DefaultTableModel)table.getModel()).getValueAt(table.getSelectedRow(), table.getSelectedColumn());
+			*/
+			
+			gui.useMenuePanelAendern();
+			
 			break;
 		case("loeschen"):
 			table = gui.getTable()[gui.getJtp().getSelectedIndex()];
@@ -49,17 +50,27 @@ public class AListener implements ActionListener {
 			}
 			m.createDelete(gui.getActiveTable(),map);
 			
-			gui.init();
+			gui.init(gui.getJtp().getSelectedIndex());
 			gui.repaint();
 			gui.useMenuepanelHaupt();
 			break;
+		case("aendernspeichern"):
+			m.createUpdate(gui.getActiveTable(), gui.getMap(),gui.getMapOld());
+			gui.init(gui.getJtp().getSelectedIndex());
+			gui.useMenuepanelHaupt();
+			gui.repaint();
+			break;
 		case("speichern"):
 			m.createInsert(gui.getActiveTable(), gui.getMap());
-			gui.init();
+			gui.init(gui.getJtp().getSelectedIndex());
 			gui.repaint();
 			
 		case("abbrechen"):
 			gui.useMenuepanelHaupt();
+			break;
+		case("refresh"):
+			gui.init(gui.getJtp().getSelectedIndex());
+			gui.repaint();
 			break;
 		}
 	}

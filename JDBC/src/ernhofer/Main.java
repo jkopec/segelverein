@@ -11,6 +11,6 @@ public class Main {
 		c.connect("school", "segelverein", "segel", "segel");
 		Model m = new Model(c);
 		GUI gui = new GUI(m);
-		gui.init();
+		gui.init(-1);
 	}
 }

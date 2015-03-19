@@ -28,9 +28,10 @@ public class GUI extends JFrame{
 	private Font menuefont;
 	private AListener al;
 	private HashMap<String,JTextField> felder;
+	private HashMap<String,String> old;
 
 	/**
-	 * Konstruktor
+	 * Konstruktor, der die wichtigsten Variablen initialisiert
 	 * @param m Eine Klasse mit den Methoden
 	 */
 	public GUI(Model m){
@@ -39,6 +40,7 @@ public class GUI extends JFrame{
 		this.m = m;
 		this.addWindowListener(new WListener(m.getC()));
 		
+		//Initialisieren der Variablen
 		this.jtp = new JTabbedPane();
 		this.menuepanel = new JPanel();
 		this.haupt = new JPanel();
@@ -54,19 +56,22 @@ public class GUI extends JFrame{
 
 	/*
 	 * Initialisiert das Fenster
+	 * @param index Der Tab der selectiert werden soll
 	 */
-	public void init(){
-		//this.removeAll();
+	public void init(int index){
 		
+		//Erzeugt die JTables
 		createView();
 		
+		//erzeugt das Hauptmenue
 		setMenuePanelHaupt();
+		if(index >1 && index < jtp.getTabCount()){
+			jtp.setSelectedIndex(index);
+		}
 		
 		//Hinzufügen der Elemente zum Fenter
 		this.add(haupt,BorderLayout.CENTER);
 		this.add(menuepanel, BorderLayout.EAST);
-		
-		//this.revalidate();
 
 		//Fensteroptionen
 		this.pack();
@@ -74,6 +79,9 @@ public class GUI extends JFrame{
 		this.setVisible(true);
 	}
 	
+	/**
+	 * Erzeugt die JTables in Tabs n einem Panel
+	 */
 	public void createView(){
 		
 		haupt.remove(jtp);
@@ -97,17 +105,17 @@ public class GUI extends JFrame{
 			jtp.add(tables[i], jsp[i]);
 		}
 		
-		haupt.add(jtp);
-		
-		//haupt.revalidate();
-		
+		haupt.add(jtp);		
 	}
 
+	/**
+	 * Befuellt das Panel fuer das Hauptmenue
+	 */
 	public void setMenuePanelHaupt(){
 
 		menuepanel.removeAll();
 		
-		this.menuebutton = new JButton[3];
+		this.menuebutton = new JButton[4];
 		this.al = new AListener(this,this.m);
 
 		//Layout fürs Menü
@@ -126,6 +134,8 @@ public class GUI extends JFrame{
 		this.menuebutton[1].setActionCommand("aendern");
 		this.menuebutton[2].setText("Löschen");
 		this.menuebutton[2].setActionCommand("loeschen");
+		this.menuebutton[3].setText("Refresh");
+		this.menuebutton[3].setActionCommand("refresh");
 
 		//Hinzufügen der einzelnen Elemente
 		this.menuepanel.add(new JPanel());
@@ -168,7 +178,6 @@ public class GUI extends JFrame{
 			JLabel label = new JLabel(attribut[i] + ": ");
 			
 			JTextField tfield = new JTextField();
-			//tfield.setAlignmentX(100);
 			
 			menuepanel.add(label);
 			menuepanel.add(tfield);
@@ -182,8 +191,54 @@ public class GUI extends JFrame{
 		menuepanel.revalidate();
 	}
 	
-	public void SetMenuePanelAendern(){
+	public void SetMenuePanelAendern(String table){
+		menuepanel.removeAll();
+		menuepanel.setLayout(new GridLayout(16,1));
+		menuepanel.add(new JPanel());
+		menuepanel.add(menueueberschrift);
 		
+		menuebutton = new JButton[2];
+		
+		for(int i = 0; i < this.menuebutton.length;++i){
+			this.menuebutton[i] = new JButton();
+			this.menuebutton[i].addActionListener(al);
+		}
+		
+		this.menuebutton[0].setText("Speichern");
+		this.menuebutton[0].setActionCommand("aendernspeichern");
+		this.menuebutton[1].setText("Abbrechen");
+		this.menuebutton[1].setActionCommand("abbrechen");
+		
+		JPanel buttons = new JPanel();
+		buttons.setLayout(new GridLayout(1,2));
+		
+		buttons.add(menuebutton[0]);
+		buttons.add(menuebutton[1]);
+		
+		felder = new HashMap();
+		old = new HashMap();
+		String attribut[] = m.getAttributes(table);
+		
+		for(int i = 0; i < attribut.length; ++i){
+			JLabel label = new JLabel(attribut[i] + ": ");
+			
+			JTable jtable = this.table[jtp.getSelectedIndex()];
+			String value = ((DefaultTableModel)jtable.getModel()).getValueAt(jtable.getSelectedRow(), i).toString(); //Der alte Wert
+			
+			JTextField tfield = new JTextField();
+			tfield.setText(value);
+			
+			menuepanel.add(label);
+			menuepanel.add(tfield);
+			
+			felder.put(attribut[i], tfield);
+			old.put(attribut[i], value);
+		}
+		
+		menuepanel.add(new JPanel());
+		menuepanel.add(buttons);
+
+		menuepanel.revalidate();
 	}
 	
 	public JTable[] getTable() {
@@ -205,7 +260,8 @@ public class GUI extends JFrame{
 	}
 	
 	public void useMenuePanelAendern(){
-		
+		SetMenuePanelAendern(getActiveTable());
+		this.repaint();
 	}
 	
 	public String getActiveTable(){
@@ -214,5 +270,9 @@ public class GUI extends JFrame{
 	
 	public HashMap getMap(){
 		return this.felder;
+	}
+	
+	public HashMap getMapOld(){
+		return this.old;
 	}
 }

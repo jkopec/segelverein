@@ -126,7 +126,40 @@ public class Model {
 		c.execute("begin;");
 		c.execute(insert);
 		c.execute("commit;");
+	}
+	
+	public void createUpdate(String table, HashMap neu, HashMap old){
+		Set settmp = old.keySet();
+		Iterator it = settmp.iterator();
 		
+		String update = "UPDATE " + table + " SET ";
+		
+		while(it.hasNext()){
+			String key = it.next().toString();
+			JTextField tfield = (JTextField) neu.get(key);
+			update += key+"='"+tfield.getText()+"'";
+			if(it.hasNext()){
+				update += ", ";
+			}
+		}
+		update += "WHERE ";
+		settmp = neu.keySet();
+		it = settmp.iterator();
+		
+		
+		while(it.hasNext()){
+			String key = it.next().toString();
+			update += key+"='"+old.get(key)+"'";
+			if(it.hasNext()){
+				update += " AND ";
+			}
+		}
+		update +=";";
+		
+		System.out.println(update);
+		c.execute("begin;");
+		c.execute(update);
+		c.execute("commit;");
 	}
 	
 	public void createDelete(String table, HashMap map){
