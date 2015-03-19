@@ -63,6 +63,21 @@ public class Connector {
 	}
 	
 	/**
+	 * Fuehrt eine query in der Datenbank aus
+	 * @param query Die Query
+	 * @return //Gibt die Ausgabe der Datenank zurueck
+	 */
+	public void execute(String command){
+		try {
+			this.st = this.con.createStatement();
+			this.st.execute(command);
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+	}
+	
+	/**
 	 * Gibt die Metadaten der Datenbank zurueck
 	 * @return Die Metadaten
 	 */

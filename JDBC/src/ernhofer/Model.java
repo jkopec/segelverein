@@ -115,13 +115,36 @@ public class Model {
 		it = settmp.iterator();
 		while(it.hasNext()){
 			JTextField tfield = (JTextField) map.get(it.next());
-			insert += tfield.getText();
+			insert += "'"+tfield.getText()+"'";
 			if(it.hasNext()){
 				insert += ",";
 			}
 		}
 		insert += ");";
 		System.out.println(insert);
+		
+		c.execute("begin;");
+		c.execute(insert);
+		c.execute("commit;");
+		
+	}
+	
+	public void createDelete(String table, HashMap map){
+		Set settmp = map.keySet();
+		
+		Iterator it = settmp.iterator();
+		
+		String delete = "DELETE FROM " + table + " WHERE ";
+		
+		while(it.hasNext()){
+			String key = (String) it.next();
+			delete += key +"='" + map.get(key)+ "'";
+			if(it.hasNext()){
+				delete += " AND ";
+			}
+		}
+		delete += ";";
+		System.out.println(delete);
 	}
 	
 	public Connector getC(){

@@ -37,12 +37,18 @@ public class GUI extends JFrame{
 		//this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.m = m;
 		this.addWindowListener(new WListener(m.getC()));
+		//Einstellungen für die Überschrift
+		this.menueueberschrift = new JLabel("Menü");
+		this.menueueberschrift.setFont(menuefont);
+		this.menueueberschrift.setHorizontalAlignment(getWidth()/2);
 	}
 
 	/*
 	 * Initialisiert das Fenster
 	 */
 	public void init(){
+		//this.removeAll();
+		
 		this.setLayout(new BorderLayout());
 		this.jtp = new JTabbedPane();
 		this.menuepanel = new JPanel();
@@ -66,15 +72,13 @@ public class GUI extends JFrame{
 		//Initialisieren der Schriftart für die 
 		this.menuefont = new Font("Calibri",Font.PLAIN,27);
 		
-		//Einstellungen für die Überschrift
-				this.menueueberschrift = new JLabel("Menü");
-				this.menueueberschrift.setFont(menuefont);
-		this.menueueberschrift.setHorizontalAlignment(getWidth()/2);
 		setMenuePanelHaupt();
 		
 		//Hinzufügen der Elemente zum Fenter
 		this.add(jtp,BorderLayout.CENTER);
 		this.add(menuepanel, BorderLayout.EAST);
+		
+		//this.revalidate();
 
 		//Fensteroptionen
 		this.pack();
@@ -165,6 +169,14 @@ public class GUI extends JFrame{
 		
 	}
 	
+	public JTable[] getTable() {
+		return table;
+	}
+
+	public JTabbedPane getJtp() {
+		return jtp;
+	}
+
 	public void useMenuePanelNeu(){
 		setMenuePanelNeu(getActiveTable());
 		this.repaint();
