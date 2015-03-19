@@ -51,7 +51,8 @@ public class AListener implements ActionListener {
 			break;
 		case("speichern"):
 			m.createInsert(gui.getActiveTable(), gui.getMap());
-			//gui.init();
+			gui.init();
+			gui.repaint();
 			
 		case("abbrechen"):
 			gui.useMenuepanelHaupt();

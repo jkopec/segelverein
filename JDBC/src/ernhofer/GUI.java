@@ -22,6 +22,7 @@ public class GUI extends JFrame{
 	private JTable[] table;
 	private JScrollPane[] jsp;
 	private JPanel menuepanel;
+	private JPanel haupt;
 	private JButton[] menuebutton;
 	private JLabel menueueberschrift;
 	private Font menuefont;
@@ -37,6 +38,14 @@ public class GUI extends JFrame{
 		//this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.m = m;
 		this.addWindowListener(new WListener(m.getC()));
+		
+		this.jtp = new JTabbedPane();
+		this.menuepanel = new JPanel();
+		this.haupt = new JPanel();
+		
+		//Initialisieren der Schriftart für die 
+		this.menuefont = new Font("Calibri",Font.PLAIN,27);
+		
 		//Einstellungen für die Überschrift
 		this.menueueberschrift = new JLabel("Menü");
 		this.menueueberschrift.setFont(menuefont);
@@ -49,9 +58,28 @@ public class GUI extends JFrame{
 	public void init(){
 		//this.removeAll();
 		
-		this.setLayout(new BorderLayout());
-		this.jtp = new JTabbedPane();
-		this.menuepanel = new JPanel();
+		createView();
+		
+		setMenuePanelHaupt();
+		
+		//Hinzufügen der Elemente zum Fenter
+		this.add(haupt,BorderLayout.CENTER);
+		this.add(menuepanel, BorderLayout.EAST);
+		
+		//this.revalidate();
+
+		//Fensteroptionen
+		this.pack();
+		this.setLocationRelativeTo(null);
+		this.setVisible(true);
+	}
+	
+	public void createView(){
+		
+		haupt.remove(jtp);
+		jtp.removeAll();
+		
+		haupt.setLayout(new BorderLayout());
 		String[] tables = m.getTables(); //speichern der Tabellennamen
 		this.table = new JTable[tables.length];
 		this.jsp = new JScrollPane[tables.length];
@@ -69,21 +97,10 @@ public class GUI extends JFrame{
 			jtp.add(tables[i], jsp[i]);
 		}
 		
-		//Initialisieren der Schriftart für die 
-		this.menuefont = new Font("Calibri",Font.PLAIN,27);
+		haupt.add(jtp);
 		
-		setMenuePanelHaupt();
+		//haupt.revalidate();
 		
-		//Hinzufügen der Elemente zum Fenter
-		this.add(jtp,BorderLayout.CENTER);
-		this.add(menuepanel, BorderLayout.EAST);
-		
-		//this.revalidate();
-
-		//Fensteroptionen
-		this.pack();
-		this.setLocationRelativeTo(null);
-		this.setVisible(true);
 	}
 
 	public void setMenuePanelHaupt(){
