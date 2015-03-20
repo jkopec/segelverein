@@ -8,6 +8,7 @@ import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
 /**
+ * Eine KLasse, die Verantwortlich ist qas mit den Buttos beim Klicken passiert
  * @author Andi Ernhofer
  * @version 2015-03-19
  */
@@ -96,7 +97,6 @@ public class AListener implements ActionListener {
 			break;
 			
 		case("refresh"):
-			System.out.println(gui.getJtp().getSelectedIndex());
 			gui.init(gui.getJtp().getSelectedIndex());
 			gui.repaint();
 			break;

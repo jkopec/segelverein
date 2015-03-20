@@ -64,8 +64,7 @@ public class Connector {
 	
 	/**
 	 * Fuehrt eine query in der Datenbank aus
-	 * @param query Die Query
-	 * @return //Gibt die Ausgabe der Datenank zurueck
+	 * @param command Der SQL-Befehl
 	 */
 	public void execute(String command){
 		try {

@@ -7,6 +7,7 @@ import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 
 /**
+ * Eine Klasse die Verantwortlich ist für das Beenden des Programms
  * @author Andi Ernhofer
  * @version 2015-03-19
  */
